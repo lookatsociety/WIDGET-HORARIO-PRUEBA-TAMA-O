@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horario de Clases</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            overflow: hidden;
+            transition: background-color 0.3s ease;
+        }
+        .container {
+            display: flex;
+            transition: transform 0.5s ease;
+            width: 100%;
+            touch-action: pan-y;
+        }
+        .day-page {
+            min-width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Alinea el contenido en la parte superior */
+            position: relative;
+        }
+        .widget {
+            background-color: #f5f5f5;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            width: 300px;
+            max-height: 70vh; /* Ajusta la altura máxima del widget */
+            overflow-y: auto; /* Habilita el desplazamiento vertical */
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            z-index: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 18px;
+            position: relative;
+        }
+        .day {
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+        .class {
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            color: #ffffff;
+            cursor: pointer;
+            position: relative;
+        }
+        .widget {
+            transform: scale(0.8);
+            transform-origin: top left;
+        }
+        .class .color-picker {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            background: none;
+            border: 2px solid #fff;
+        }
+        .class .time, .class .location {
+            font-size: 12px;
+        }
+        .editable {
+            border: none;
+            background: transparent;
+            color: #ffffff;
+            width: 100%;
+        }
+        .menu {
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            z-index: 2;
+        }
+        .menu button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+        }
+        .menu-content {
+            display: none;
+            position: absolute;
+            top: 30px;
+            right: 0;
+            background: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 3;
+        }
+        .menu-content a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #000;
+        }
+        .menu-content a:hover {
+            background-color: #f0f0f0;
+        }
+        .dark-mode {
+            background-color: #191919;
+        }
+        .dark-mode .widget {
+            background-color: #1F1F1F;
+            color: #ffffff;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 10px;
+        }
+        .nav-buttons button {
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="container">
+        <div class="day-page" id="monday">
+            <div class="widget">
+                <div class="header">
+                    Lunes
+                    <div class="menu">
+                        <button onclick="toggleMenu('menuContentMonday')">☰</button>
+                        <div class="menu-content" id="menuContentMonday">
+                            <a href="#" onclick="toggleDarkMode()">Modo Oscuro/Claro</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="day" id="dayContainerMonday">
+                    <!-- Clases se generan dinámicamente -->
+                </div>
+                <div class="nav-buttons">
+                    <button onclick="prevPage()">&#8249;</button>
+                    <button onclick="nextPage()">&#8250;</button>
+                </div>
+            </div>
+        </div>
+        <div class="day-page" id="tuesday">
+            <div class="widget">
+                <div class="header">
+                    Martes
+                    <div class="menu">
+                        <button onclick="toggleMenu('menuContentTuesday')">☰</button>
+                        <div class="menu-content" id="menuContentTuesday">
+                            <a href="#" onclick="toggleDarkMode()">Modo Oscuro/Claro</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="day" id="dayContainerTuesday">
+                    <!-- Clases se generan dinámicamente -->
+                </div>
+                <div class="nav-buttons">
+                    <button onclick="prevPage()">&#8249;</button>
+                    <button onclick="nextPage()">&#8250;</button>
+                </div>
+            </div>
+        </div>
+        <div class="day-page" id="wednesday">
+            <div class="widget">
+                <div class="header">
+                    Miércoles
+                    <div class="menu">
+                        <button onclick="toggleMenu('menuContentWednesday')">☰</button>
+                        <div class="menu-content" id="menuContentWednesday">
+                            <a href="#" onclick="toggleDarkMode()">Modo Oscuro/Claro</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="day" id="dayContainerWednesday">
+                    <!-- Clases se generan dinámicamente -->
+                </div>
+                <div class="nav-buttons">
+                    <button onclick="prevPage()">&#8249;</button>
+                    <button onclick="nextPage()">&#8250;</button>
+                </div>
+            </div>
+        </div>
+        <div class="day-page" id="thursday">
+            <div class="widget">
+                <div class="header">
+                    Jueves
+                    <div class="menu">
+                        <button onclick="toggleMenu('menuContentThursday')">☰</button>
+                        <div class="menu-content" id="menuContentThursday">
+                            <a href="#" onclick="toggleDarkMode()">Modo Oscuro/Claro</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="day" id="dayContainerThursday">
+                    <!-- Clases se generan dinámicamente -->
+                </div>
+                <div class="nav-buttons">
+                    <button onclick="prevPage()">&#8249;</button>
+                    <button onclick="nextPage()">&#8250;</button>
+                </div>
+            </div>
+        </div>
+        <div class="day-page" id="friday">
+            <div class="widget">
+                <div class="header">
+                    Viernes
+                    <div class="menu">
+                        <button onclick="toggleMenu('menuContentFriday')">☰</button>
+                        <div class="menu-content" id="menuContentFriday">
+                            <a href="#" onclick="toggleDarkMode()">Modo Oscuro/Claro</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="day" id="dayContainerFriday">
+                    <!-- Clases se generan dinámicamente -->
+                </div>
+                <div class="nav-buttons">
+                    <button onclick="prevPage()">&#8249;</button>
+                    <button onclick="nextPage()">&#8250;</button>
+                </div>
+            </div>
+        </div>
+        <div class="day-page" id="saturday">
+            <div class="widget">
+                <div class="header">
+                    Sábado
+                    <div class="menu">
+                        <button onclick="toggleMenu('menuContentSaturday')">☰</button>
+                        <div class="menu-content" id="menuContentSaturday">
+                            <a href="#" onclick="toggleDarkMode()">Modo Oscuro/Claro</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="day" id="dayContainerSaturday">
+                    <!-- Clases se generan dinámicamente -->
+                </div>
+                <div class="nav-buttons">
+                    <button onclick="prevPage()">&#8249;</button>
+                    <button onclick="nextPage()">&#8250;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="color" id="hiddenColorPicker" style="display: none;" onchange="updateColor(this)">
+    <script>
+        let currentPage = 0;
+        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+        function toggleMenu(menuId) {
+            const menuContent = document.getElementById(menuId);
+            menuContent.style.display = menuContent.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDarkMode);
+        }
+
+        function openColorPicker(element) {
+            const colorPicker = document.getElementById('hiddenColorPicker');
+            colorPicker.targetElement = element;
+            colorPicker.click();
+        }
+
+        function updateColor(colorPicker) {
+            const element = colorPicker.targetElement;
+            const classElement = element.closest('.class');
+            classElement.style.backgroundColor = colorPicker.value;
+            element.style.backgroundColor = colorPicker.value;
+            saveSchedule();
+        }
+
+        function saveSchedule() {
+            days.forEach(day => {
+                const classes = document.querySelectorAll(`#dayContainer${day} .class`);
+                const schedule = [];
+
+                classes.forEach(classEl => {
+                    const subject = classEl.querySelector('.subject').value;
+                    const time = classEl.querySelector('.time').value;
+                    const location = classEl.querySelector('.location') ? classEl.querySelector('.location').value : '';
+                    const color = classEl.style.backgroundColor;
+
+                    schedule.push({ subject, time, location, color });
+                });
+
+                localStorage.setItem(`schedule${day}`, JSON.stringify(schedule));
+            });
+        }
+
+        function loadSchedule() {
+            days.forEach(day => {
+                const schedule = JSON.parse(localStorage.getItem(`schedule${day}`));
+                if (schedule) {
+                    schedule.forEach(classData => {
+                        addClassElement(day, classData);
+                    });
+                } else {
+                    const defaultClasses = [
+                        { subject: 'Física', time: '8:00 AM - 9:30 AM', location: 'Lab 1', color: '#4a90e2' },
+                        { subject: 'Dibujo', time: '9:30 AM - 11:00 AM', location: 'Aula 1', color: '#f5a623' },
+                        { subject: 'Inglés', time: '11:00 AM - 2:00 PM', location: 'Lab 2', color: '#7ed321' },
+                        { subject: 'Filosofía', time: '2:00 PM - 4:00 PM', location: 'Lab 9b', color: '#50e3c2' },
+                        { subject: 'Ciencias Naturales', time: '4:00 PM - 6:00 PM', location: 'Lab 2a', color: '#d0021b' },
+                        { subject: 'Mates', time: '6:00 PM - 7:00 PM', location: 'Aula 3.4.1', color: '#9013fe' }
+                    ];
+                    defaultClasses.forEach(classData => {
+                        addClassElement(day, classData);
+                    });
+                }
+            });
+        }
+
+        function addClassElement(day, { subject, time, location, color }) {
+            const dayContainer = document.getElementById(`dayContainer${day}`);
+            if (!dayContainer) return; // Evitar el error si el contenedor no existe
+            const classEl = document.createElement('div');
+            classEl.className = 'class';
+            classEl.style.backgroundColor = color;
+
+            classEl.innerHTML = `
+                <div class="color-picker" onclick="openColorPicker(this)" style="background-color: ${color};"></div>
+                <input class="editable subject" value="${subject}">
+                <input class="editable time" value="${time}">
+                <input class="editable location" value="${location}">
+            `;
+
+            classEl.querySelectorAll('.editable').forEach(input => {
+                input.addEventListener('input', saveSchedule);
+            });
+
+            dayContainer.appendChild(classEl);
+        }
+
+        function nextPage() {
+            if (currentPage < days.length - 1) {
+                currentPage++;
+                updatePage();
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                updatePage();
+            }
+        }
+
+        function updatePage() {
+            const container = document.getElementById('container');
+            container.style.transform = `translateX(-${currentPage * 100}%)`;
+        }
+
+        let startX = 0;
+        let currentX = 0;
+
+        function handleTouchStart(evt) {
+            const firstTouch = evt.touches[0];
+            startX = firstTouch.clientX;
+        }
+
+        function handleTouchMove(evt) {
+            if (!startX) return;
+
+            const currentTouch = evt.touches[0];
+            currentX = currentTouch.clientX - startX;
+        }
+
+        function handleTouchEnd() {
+            if (currentX < -50) {
+                nextPage();
+            } else if (currentX > 50) {
+                prevPage();
+            }
+            startX = 0;
+            currentX = 0;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSchedule();
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+            }
+
+            const container = document.getElementById('container');
+            container.addEventListener('touchstart', handleTouchStart, false);
+            container.addEventListener('touchmove', handleTouchMove, false);
+            container.addEventListener('touchend', handleTouchEnd, false);
+        });
+    </script>
+</body>
+</html>
+
