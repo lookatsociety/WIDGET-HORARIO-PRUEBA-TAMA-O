@@ -16,6 +16,8 @@
             display: flex;
             transition: transform 0.5s ease;
             width: 100%;
+            padding: 0;
+            margin: 0;
         }
         .day-page {
             min-width: 100%;
@@ -27,48 +29,50 @@
         }
         .widget {
             background-color: #f5f5f5;
-            border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            padding: 15px;
-            width: 280px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 12px;
+            width: 220px;
             max-height: 70vh;
             overflow-y: auto;
             transition: background-color 0.3s ease, box-shadow 0.3s ease;
             z-index: 1;
-            position: relative; /* Añadido para que el menú esté dentro */
+            position: relative;
         }
         .header {
             text-align: center;
             font-weight: bold;
             margin-bottom: 8px;
-            font-size: 16px;
+            font-size: 14px;
             position: relative;
         }
         .day {
             overflow-y: auto;
             flex-grow: 1;
+            width: 100%;
         }
         .class {
-            padding: 8px;
+            padding: 6px;
             border-radius: 8px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             color: #ffffff;
             cursor: pointer;
             position: relative;
+            font-size: 12px;
         }
         .class .color-picker {
             position: absolute;
-            top: 6px;
-            right: 6px;
-            width: 18px;
-            height: 18px;
+            top: 4px;
+            right: 4px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
             background: none;
             border: 2px solid #fff;
             cursor: pointer;
         }
         .class .time, .class .location {
-            font-size: 12px;
+            font-size: 10px;
         }
         .editable {
             border: none;
@@ -78,20 +82,20 @@
         }
         .menu {
             position: absolute;
-            top: 10px; /* Ajuste en la distancia del menú desde la parte superior */
-            right: 10px; /* Ajuste en la distancia del menú desde la derecha */
+            top: 8px;
+            right: 8px;
             z-index: 2;
         }
         .menu button {
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 20px;
+            font-size: 18px;
         }
         .menu-content {
             display: none;
             position: absolute;
-            top: 24px;
+            top: 20px;
             right: 0;
             background: #ffffff;
             border: 1px solid #ccc;
@@ -101,9 +105,10 @@
         }
         .menu-content a {
             display: block;
-            padding: 8px;
+            padding: 6px;
             text-decoration: none;
             color: #000;
+            font-size: 12px;
         }
         .menu-content a:hover {
             background-color: #f0f0f0;
@@ -114,7 +119,7 @@
         .dark-mode .widget {
             background-color: #1F1F1F;
             color: #ffffff;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
         }
         .nav-buttons {
             display: flex;
@@ -125,10 +130,30 @@
             background: rgba(0, 0, 0, 0.5);
             border: none;
             color: #fff;
-            font-size: 22px;
+            font-size: 18px;
             cursor: pointer;
-            padding: 8px;
+            padding: 6px;
             border-radius: 50%;
+        }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .widget {
+                width: 90%;
+                padding: 10px;
+            }
+            .class {
+                font-size: 10px;
+                padding: 4px;
+            }
+            .header {
+                font-size: 12px;
+            }
+            .menu button {
+                font-size: 16px;
+            }
+            .menu-content a {
+                font-size: 10px;
+            }
         }
     </style>
 </head>
@@ -331,36 +356,37 @@
             classEl.innerHTML = `
                 <div class="color-picker" onclick="openColorPicker(this)" style="background-color: ${color};"></div>
                 <input class="editable subject" value="${subject}">
+                <input class="editable time" value
                 <input class="editable time" value="${time}">
-                <input class="editable location" value="${location}">
-            `;
-            dayContainer.appendChild(classEl);
-        }
+                                <input class="editable location" value="${location}">
+                            `;
+                            dayContainer.appendChild(classEl);
+                        }
 
-        function nextPage() {
-            if (currentPage < days.length - 1) {
-                currentPage++;
-                updatePage();
-            }
-        }
+                        function prevPage() {
+                            currentPage--;
+                            if (currentPage < 0) currentPage = days.length - 1;
+                            updatePage();
+                        }
 
-        function prevPage() {
-            if (currentPage > 0) {
-                currentPage--;
-                updatePage();
-            }
-        }
+                        function nextPage() {
+                            currentPage++;
+                            if (currentPage >= days.length) currentPage = 0;
+                            updatePage();
+                        }
 
-        function updatePage() {
-            const container = document.getElementById('container');
-            container.style.transform = `translateX(-${currentPage * 100}%)`;
-        }
+                        function updatePage() {
+                            const container = document.getElementById('container');
+                            const offset = -100 * currentPage;
+                            container.style.transform = `translateX(${offset}%)`;
+                        }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            loadSchedule();
-            const isDarkMode = localStorage.getItem('darkMode') === 'true';
-            if (isDarkMode) document.body.classList.add('dark-mode');
-        });
-    </script>
-</body>
-</html>
+                        document.addEventListener("DOMContentLoaded", function() {
+                            loadSchedule();
+                            if (localStorage.getItem('darkMode') === 'true') {
+                                toggleDarkMode();
+                            }
+                        });
+                    </script>
+                </body>
+                </html>
