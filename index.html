@@ -16,35 +16,32 @@
             display: flex;
             transition: transform 0.5s ease;
             width: 100%;
-            touch-action: pan-y;
         }
         .day-page {
             min-width: 100%;
             height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Alinea el contenido en la parte superior */
+            align-items: flex-start;
             position: relative;
         }
         .widget {
             background-color: #f5f5f5;
-            border-radius: 15px;
+            border-radius: 12px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            padding: 20px;
-            width: 300px;
-            max-height: 70vh; /* Ajusta la altura máxima del widget */
-            overflow-y: auto; /* Habilita el desplazamiento vertical */
+            padding: 15px;
+            width: 280px;
+            max-height: 70vh;
+            overflow-y: auto;
             transition: background-color 0.3s ease, box-shadow 0.3s ease;
             z-index: 1;
-            position: relative;
-            display: flex;
-            flex-direction: column;
+            position: relative; /* Añadido para que el menú esté dentro */
         }
         .header {
             text-align: center;
             font-weight: bold;
-            margin-bottom: 10px;
-            font-size: 18px;
+            margin-bottom: 8px;
+            font-size: 16px;
             position: relative;
         }
         .day {
@@ -52,27 +49,23 @@
             flex-grow: 1;
         }
         .class {
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 8px;
+            margin-bottom: 8px;
             color: #ffffff;
             cursor: pointer;
             position: relative;
         }
-        .widget {
-            transform: scale(0.8);
-            transform-origin: top left;
-        }
         .class .color-picker {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 20px;
-            height: 20px;
+            top: 6px;
+            right: 6px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
-            cursor: pointer;
             background: none;
             border: 2px solid #fff;
+            cursor: pointer;
         }
         .class .time, .class .location {
             font-size: 12px;
@@ -85,20 +78,20 @@
         }
         .menu {
             position: absolute;
-            top: -10px;
-            right: 10px;
+            top: 10px; /* Ajuste en la distancia del menú desde la parte superior */
+            right: 10px; /* Ajuste en la distancia del menú desde la derecha */
             z-index: 2;
         }
         .menu button {
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 24px;
+            font-size: 20px;
         }
         .menu-content {
             display: none;
             position: absolute;
-            top: 30px;
+            top: 24px;
             right: 0;
             background: #ffffff;
             border: 1px solid #ccc;
@@ -108,7 +101,7 @@
         }
         .menu-content a {
             display: block;
-            padding: 10px;
+            padding: 8px;
             text-decoration: none;
             color: #000;
         }
@@ -126,21 +119,22 @@
         .nav-buttons {
             display: flex;
             justify-content: space-between;
-            padding-top: 10px;
+            padding-top: 8px;
         }
         .nav-buttons button {
             background: rgba(0, 0, 0, 0.5);
             border: none;
             color: #fff;
-            font-size: 24px;
+            font-size: 22px;
             cursor: pointer;
-            padding: 10px;
+            padding: 8px;
             border-radius: 50%;
         }
     </style>
 </head>
 <body>
     <div class="container" id="container">
+        <!-- Día Lunes -->
         <div class="day-page" id="monday">
             <div class="widget">
                 <div class="header">
@@ -152,15 +146,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="day" id="dayContainerMonday">
-                    <!-- Clases se generan dinámicamente -->
-                </div>
+                <div class="day" id="dayContainerMonday"></div>
                 <div class="nav-buttons">
                     <button onclick="prevPage()">&#8249;</button>
                     <button onclick="nextPage()">&#8250;</button>
                 </div>
             </div>
         </div>
+
+        <!-- Día Martes -->
         <div class="day-page" id="tuesday">
             <div class="widget">
                 <div class="header">
@@ -172,15 +166,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="day" id="dayContainerTuesday">
-                    <!-- Clases se generan dinámicamente -->
-                </div>
+                <div class="day" id="dayContainerTuesday"></div>
                 <div class="nav-buttons">
                     <button onclick="prevPage()">&#8249;</button>
                     <button onclick="nextPage()">&#8250;</button>
                 </div>
             </div>
         </div>
+
+        <!-- Día Miércoles -->
         <div class="day-page" id="wednesday">
             <div class="widget">
                 <div class="header">
@@ -192,15 +186,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="day" id="dayContainerWednesday">
-                    <!-- Clases se generan dinámicamente -->
-                </div>
+                <div class="day" id="dayContainerWednesday"></div>
                 <div class="nav-buttons">
                     <button onclick="prevPage()">&#8249;</button>
                     <button onclick="nextPage()">&#8250;</button>
                 </div>
             </div>
         </div>
+
+        <!-- Día Jueves -->
         <div class="day-page" id="thursday">
             <div class="widget">
                 <div class="header">
@@ -212,15 +206,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="day" id="dayContainerThursday">
-                    <!-- Clases se generan dinámicamente -->
-                </div>
+                <div class="day" id="dayContainerThursday"></div>
                 <div class="nav-buttons">
                     <button onclick="prevPage()">&#8249;</button>
                     <button onclick="nextPage()">&#8250;</button>
                 </div>
             </div>
         </div>
+
+        <!-- Día Viernes -->
         <div class="day-page" id="friday">
             <div class="widget">
                 <div class="header">
@@ -232,15 +226,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="day" id="dayContainerFriday">
-                    <!-- Clases se generan dinámicamente -->
-                </div>
+                <div class="day" id="dayContainerFriday"></div>
                 <div class="nav-buttons">
                     <button onclick="prevPage()">&#8249;</button>
                     <button onclick="nextPage()">&#8250;</button>
                 </div>
             </div>
         </div>
+
+        <!-- Día Sábado -->
         <div class="day-page" id="saturday">
             <div class="widget">
                 <div class="header">
@@ -252,9 +246,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="day" id="dayContainerSaturday">
-                    <!-- Clases se generan dinámicamente -->
-                </div>
+                <div class="day" id="dayContainerSaturday"></div>
                 <div class="nav-buttons">
                     <button onclick="prevPage()">&#8249;</button>
                     <button onclick="nextPage()">&#8250;</button>
@@ -262,6 +254,7 @@
             </div>
         </div>
     </div>
+
     <input type="color" id="hiddenColorPicker" style="display: none;" onchange="updateColor(this)">
     <script>
         let currentPage = 0;
@@ -296,16 +289,13 @@
             days.forEach(day => {
                 const classes = document.querySelectorAll(`#dayContainer${day} .class`);
                 const schedule = [];
-
                 classes.forEach(classEl => {
                     const subject = classEl.querySelector('.subject').value;
                     const time = classEl.querySelector('.time').value;
                     const location = classEl.querySelector('.location') ? classEl.querySelector('.location').value : '';
                     const color = classEl.style.backgroundColor;
-
                     schedule.push({ subject, time, location, color });
                 });
-
                 localStorage.setItem(`schedule${day}`, JSON.stringify(schedule));
             });
         }
@@ -335,22 +325,15 @@
 
         function addClassElement(day, { subject, time, location, color }) {
             const dayContainer = document.getElementById(`dayContainer${day}`);
-            if (!dayContainer) return; // Evitar el error si el contenedor no existe
             const classEl = document.createElement('div');
             classEl.className = 'class';
             classEl.style.backgroundColor = color;
-
             classEl.innerHTML = `
                 <div class="color-picker" onclick="openColorPicker(this)" style="background-color: ${color};"></div>
                 <input class="editable subject" value="${subject}">
                 <input class="editable time" value="${time}">
                 <input class="editable location" value="${location}">
             `;
-
-            classEl.querySelectorAll('.editable').forEach(input => {
-                input.addEventListener('input', saveSchedule);
-            });
-
             dayContainer.appendChild(classEl);
         }
 
@@ -373,44 +356,11 @@
             container.style.transform = `translateX(-${currentPage * 100}%)`;
         }
 
-        let startX = 0;
-        let currentX = 0;
-
-        function handleTouchStart(evt) {
-            const firstTouch = evt.touches[0];
-            startX = firstTouch.clientX;
-        }
-
-        function handleTouchMove(evt) {
-            if (!startX) return;
-
-            const currentTouch = evt.touches[0];
-            currentX = currentTouch.clientX - startX;
-        }
-
-        function handleTouchEnd() {
-            if (currentX < -50) {
-                nextPage();
-            } else if (currentX > 50) {
-                prevPage();
-            }
-            startX = 0;
-            currentX = 0;
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
             loadSchedule();
             const isDarkMode = localStorage.getItem('darkMode') === 'true';
-            if (isDarkMode) {
-                document.body.classList.add('dark-mode');
-            }
-
-            const container = document.getElementById('container');
-            container.addEventListener('touchstart', handleTouchStart, false);
-            container.addEventListener('touchmove', handleTouchMove, false);
-            container.addEventListener('touchend', handleTouchEnd, false);
+            if (isDarkMode) document.body.classList.add('dark-mode');
         });
     </script>
 </body>
 </html>
-
