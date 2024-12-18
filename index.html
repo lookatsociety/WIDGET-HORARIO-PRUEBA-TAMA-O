@@ -26,6 +26,7 @@
             justify-content: center;
             align-items: flex-start;
             position: relative;
+            overflow: hidden;
         }
         .widget {
             background-color: #f5f5f5;
@@ -121,8 +122,7 @@
         }
         .nav-buttons {
             display: flex;
-            justify-content: space-between;
-            padding-top: 10px;
+            justify-content: center;
             position: absolute;
             bottom: 10px;
             width: 100%;
@@ -135,6 +135,7 @@
             cursor: pointer;
             padding: 10px;
             border-radius: 50%;
+            margin: 0 10px;
         }
 
         @media (max-width: 768px) {
@@ -158,7 +159,7 @@
 </head>
 <body>
     <div class="container" id="container">
-        <!-- Aquí van las páginas de los días, por ejemplo: Lunes, Martes, Miércoles -->
+        <!-- Páginas de los días -->
         <div class="day-page" id="monday">
             <div class="widget">
                 <div class="header">
@@ -171,7 +172,7 @@
                     </div>
                 </div>
                 <div class="day" id="dayContainerMonday">
-                    <!-- Clases se generan dinámicamente -->
+                    <!-- Las clases se generarán dinámicamente -->
                 </div>
                 <div class="nav-buttons">
                     <button onclick="prevPage()">&#8249;</button>
@@ -179,12 +180,34 @@
                 </div>
             </div>
         </div>
-        <!-- Agregar más días aquí (Martes, Miércoles, etc.) -->
+        <div class="day-page" id="tuesday">
+            <div class="widget">
+                <div class="header">
+                    Martes
+                    <div class="menu">
+                        <button onclick="toggleMenu('menuContentTuesday')">☰</button>
+                        <div class="menu-content" id="menuContentTuesday">
+                            <a href="#" onclick="toggleDarkMode()">Modo Oscuro/Claro</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="day" id="dayContainerTuesday">
+                    <!-- Las clases se generarán dinámicamente -->
+                </div>
+                <div class="nav-buttons">
+                    <button onclick="prevPage()">&#8249;</button>
+                    <button onclick="nextPage()">&#8250;</button>
+                </div>
+            </div>
+        </div>
+        <!-- Puedes agregar más días aquí -->
     </div>
+
     <input type="color" id="hiddenColorPicker" style="display: none;" onchange="updateColor(this)">
+
     <script>
         let currentPage = 0;
-        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
 
         function toggleMenu(menuId) {
             const menuContent = document.getElementById(menuId);
@@ -213,7 +236,7 @@
 
         function saveSchedule() {
             days.forEach(day => {
-                const classes = document.querySelectorAll(`#dayContainer${day} .class`);
+                const classes = document.querySelectorAll(`#dayContainer${capitalize(day)} .class`);
                 const schedule = [];
 
                 classes.forEach(classEl => {
@@ -225,13 +248,13 @@
                     schedule.push({ subject, time, location, color });
                 });
 
-                localStorage.setItem(`schedule${day}`, JSON.stringify(schedule));
+                localStorage.setItem(`schedule${capitalize(day)}`, JSON.stringify(schedule));
             });
         }
 
         function loadSchedule() {
             days.forEach(day => {
-                const schedule = JSON.parse(localStorage.getItem(`schedule${day}`));
+                const schedule = JSON.parse(localStorage.getItem(`schedule${capitalize(day)}`));
                 if (schedule) {
                     schedule.forEach(classData => {
                         addClassElement(day, classData);
@@ -253,7 +276,7 @@
         }
 
         function addClassElement(day, { subject, time, location, color }) {
-            const dayContainer = document.getElementById(`dayContainer${day}`);
+            const dayContainer = document.getElementById(`dayContainer${capitalize(day)}`);
             if (!dayContainer) return;
             const classEl = document.createElement('div');
             classEl.className = 'class';
@@ -267,6 +290,10 @@
             `;
 
             dayContainer.appendChild(classEl);
+        }
+
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
         }
 
         function prevPage() {
