@@ -126,6 +126,10 @@
             display: flex;
             justify-content: space-between;
             padding-top: 10px;
+            position: absolute;
+            width: 100%;
+            top: 50%;
+            transform: translateY(-50%);
         }
         .nav-buttons button {
             background: rgba(0, 0, 0, 0.5);
@@ -187,6 +191,11 @@
     </div>
 
     <input type="color" id="hiddenColorPicker" style="display: none;" onchange="updateColor(this)">
+    
+    <div class="nav-buttons">
+        <button onclick="prevPage()">◀</button>
+        <button onclick="nextPage()">▶</button>
+    </div>
     
     <script>
         let currentPage = 0;
