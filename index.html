@@ -15,7 +15,8 @@
         .container {
             display: flex;
             transition: transform 0.5s ease;
-            width: 700%;
+            width: 100%;
+            touch-action: pan-y;
         }
         .day-page {
             min-width: 100%;
@@ -27,18 +28,24 @@
         }
         .widget {
             background-color: #f5f5f5;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            padding: 20px;
             width: 300px;
-            max-height: 80vh;
+            max-height: 70vh;
             overflow-y: auto;
             transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            z-index: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
         }
         .header {
             text-align: center;
             font-weight: bold;
             margin-bottom: 10px;
+            font-size: 18px;
+            position: relative;
         }
         .day {
             overflow-y: auto;
@@ -46,17 +53,16 @@
         }
         .class {
             padding: 10px;
-            border-radius: 8px;
+            border-radius: 10px;
             margin-bottom: 10px;
             color: #ffffff;
             cursor: pointer;
             position: relative;
-            background-color: #2196f3;
         }
         .class .color-picker {
             position: absolute;
-            top: 5px;
-            right: 5px;
+            top: 10px;
+            right: 10px;
             width: 20px;
             height: 20px;
             border-radius: 50%;
@@ -66,7 +72,6 @@
         }
         .class .time, .class .location {
             font-size: 12px;
-            margin-top: 5px;
         }
         .editable {
             border: none;
@@ -74,17 +79,50 @@
             color: #ffffff;
             width: 100%;
         }
+        .menu {
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            z-index: 2;
+        }
+        .menu button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+        }
+        .menu-content {
+            display: none;
+            position: absolute;
+            top: 30px;
+            right: 0;
+            background: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 3;
+        }
+        .menu-content a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #000;
+        }
+        .menu-content a:hover {
+            background-color: #f0f0f0;
+        }
         .dark-mode {
             background-color: #191919;
         }
         .dark-mode .widget {
             background-color: #1F1F1F;
             color: #ffffff;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
         }
         .nav-buttons {
             display: flex;
             justify-content: space-between;
-            margin-top: 10px;
+            padding-top: 10px;
         }
         .nav-buttons button {
             background: rgba(0, 0, 0, 0.5);
@@ -95,119 +133,94 @@
             padding: 10px;
             border-radius: 50%;
         }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .widget {
+                width: 90%;
+                padding: 15px;
+            }
+
+            .header {
+                font-size: 16px;
+            }
+
+            .nav-buttons button {
+                font-size: 18px;
+                padding: 8px;
+            }
+
+            .class {
+                padding: 8px;
+            }
+
+            .class .editable {
+                font-size: 14px;
+            }
+
+            .menu-content a {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                font-size: 14px;
+            }
+
+            .nav-buttons button {
+                font-size: 16px;
+                padding: 6px;
+            }
+
+            .class .editable {
+                font-size: 12px;
+            }
+
+            .class {
+                padding: 6px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container" id="container">
-        <!-- Días de la semana -->
+        <!-- Páginas de días -->
         <div class="day-page" id="monday">
             <div class="widget">
-                <div class="header">Lunes</div>
-                <div class="day" id="dayContainerMonday">
-                    <!-- Clases del lunes -->
-                    <div class="class">
-                        <input class="editable subject" value="Matemáticas">
-                        <input class="editable time" value="08:00 - 09:00">
-                        <input class="editable location" value="Aula 101">
-                        <div class="color-picker" onclick="openColorPicker(this)"></div>
-                    </div>
-                    <div class="class">
-                        <input class="editable subject" value="Historia">
-                        <input class="editable time" value="09:00 - 10:00">
-                        <input class="editable location" value="Aula 102">
-                        <div class="color-picker" onclick="openColorPicker(this)"></div>
+                <div class="header">
+                    Lunes
+                    <div class="menu">
+                        <button onclick="toggleMenu('menuContentMonday')">☰</button>
+                        <div class="menu-content" id="menuContentMonday">
+                            <a href="#" onclick="toggleDarkMode()">Modo Oscuro/Claro</a>
+                        </div>
                     </div>
                 </div>
+                <div class="day" id="dayContainerMonday"></div>
                 <div class="nav-buttons">
                     <button onclick="prevPage()">&#8249;</button>
                     <button onclick="nextPage()">&#8250;</button>
                 </div>
             </div>
         </div>
-
-        <!-- Repetir la estructura para cada día -->
-        <div class="day-page" id="tuesday">
-            <div class="widget">
-                <div class="header">Martes</div>
-                <div class="day" id="dayContainerTuesday">
-                    <!-- Clases del martes -->
-                    <div class="class">
-                        <input class="editable subject" value="Física">
-                        <input class="editable time" value="08:00 - 09:00">
-                        <input class="editable location" value="Aula 201">
-                        <div class="color-picker" onclick="openColorPicker(this)"></div>
-                    </div>
-                    <div class="class">
-                        <input class="editable subject" value="Química">
-                        <input class="editable time" value="10:00 - 11:00">
-                        <input class="editable location" value="Laboratorio">
-                        <div class="color-picker" onclick="openColorPicker(this)"></div>
-                    </div>
-                </div>
-                <div class="nav-buttons">
-                    <button onclick="prevPage()">&#8249;</button>
-                    <button onclick="nextPage()">&#8250;</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Repetir para miércoles, jueves, viernes, sábado y domingo -->
-        <div class="day-page" id="wednesday">
-            <div class="widget">
-                <div class="header">Miércoles</div>
-                <div class="day" id="dayContainerWednesday"></div>
-                <div class="nav-buttons">
-                    <button onclick="prevPage()">&#8249;</button>
-                    <button onclick="nextPage()">&#8250;</button>
-                </div>
-            </div>
-        </div>
-        <div class="day-page" id="thursday">
-            <div class="widget">
-                <div class="header">Jueves</div>
-                <div class="day" id="dayContainerThursday"></div>
-                <div class="nav-buttons">
-                    <button onclick="prevPage()">&#8249;</button>
-                    <button onclick="nextPage()">&#8250;</button>
-                </div>
-            </div>
-        </div>
-        <div class="day-page" id="friday">
-            <div class="widget">
-                <div class="header">Viernes</div>
-                <div class="day" id="dayContainerFriday"></div>
-                <div class="nav-buttons">
-                    <button onclick="prevPage()">&#8249;</button>
-                    <button onclick="nextPage()">&#8250;</button>
-                </div>
-            </div>
-        </div>
-        <div class="day-page" id="saturday">
-            <div class="widget">
-                <div class="header">Sábado</div>
-                <div class="day" id="dayContainerSaturday"></div>
-                <div class="nav-buttons">
-                    <button onclick="prevPage()">&#8249;</button>
-                    <button onclick="nextPage()">&#8250;</button>
-                </div>
-            </div>
-        </div>
-        <div class="day-page" id="sunday">
-            <div class="widget">
-                <div class="header">Domingo</div>
-                <div class="day" id="dayContainerSunday"></div>
-                <div class="nav-buttons">
-                    <button onclick="prevPage()">&#8249;</button>
-                    <button onclick="nextPage()">&#8250;</button>
-                </div>
-            </div>
-        </div>
+        <!-- Más días aquí (martes, miércoles, etc.) -->
     </div>
-
     <input type="color" id="hiddenColorPicker" style="display: none;" onchange="updateColor(this)">
-
     <script>
         let currentPage = 0;
+        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+        function toggleMenu(menuId) {
+            const menuContent = document.getElementById(menuId);
+            menuContent.style.display = menuContent.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDarkMode);
+        }
 
         function openColorPicker(element) {
             const colorPicker = document.getElementById('hiddenColorPicker');
@@ -220,10 +233,60 @@
             const classElement = element.closest('.class');
             classElement.style.backgroundColor = colorPicker.value;
             element.style.backgroundColor = colorPicker.value;
+            saveSchedule();
+        }
+
+        function saveSchedule() {
+            days.forEach(day => {
+                const classes = document.querySelectorAll(`#dayContainer${day} .class`);
+                const schedule = [];
+
+                classes.forEach(classEl => {
+                    const subject = classEl.querySelector('.subject').value;
+                    const time = classEl.querySelector('.time').value;
+                    const location = classEl.querySelector('.location') ? classEl.querySelector('.location').value : '';
+                    const color = classEl.style.backgroundColor;
+
+                    schedule.push({ subject, time, location, color });
+                });
+
+                localStorage.setItem(`schedule${day}`, JSON.stringify(schedule));
+            });
+        }
+
+        function loadSchedule() {
+            days.forEach(day => {
+                const schedule = JSON.parse(localStorage.getItem(`schedule${day}`));
+                if (schedule) {
+                    schedule.forEach(classData => {
+                        addClassElement(day, classData);
+                    });
+                }
+            });
+        }
+
+        function addClassElement(day, { subject, time, location, color }) {
+            const dayContainer = document.getElementById(`dayContainer${day}`);
+            const classEl = document.createElement('div');
+            classEl.className = 'class';
+            classEl.style.backgroundColor = color;
+
+            classEl.innerHTML = `
+                <div class="color-picker" onclick="openColorPicker(this)" style="background-color: ${color};"></div>
+                <input class="editable subject" value="${subject}">
+                <input class="editable time" value="${time}">
+                <input class="editable location" value="${location}">
+            `;
+
+            classEl.querySelectorAll('.editable').forEach(input => {
+                input.addEventListener('input', saveSchedule);
+            });
+
+            dayContainer.appendChild(classEl);
         }
 
         function nextPage() {
-            if (currentPage < 6) {
+            if (currentPage < days.length - 1) {
                 currentPage++;
                 updatePage();
             }
@@ -240,6 +303,44 @@
             const container = document.getElementById('container');
             container.style.transform = `translateX(-${currentPage * 100}%)`;
         }
+
+        let startX = 0;
+        let currentX = 0;
+
+        function handleTouchStart(evt) {
+            const firstTouch = evt.touches[0];
+            startX = firstTouch.clientX;
+        }
+
+        function handleTouchMove(evt) {
+            if (!startX) return;
+
+            const currentTouch = evt.touches[0];
+            currentX = currentTouch.clientX - startX;
+        }
+
+        function handleTouchEnd() {
+            if (currentX < -50) {
+                nextPage();
+            } else if (currentX > 50) {
+                prevPage();
+            }
+            startX = 0;
+            currentX = 0;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSchedule();
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+            }
+
+            const container = document.getElementById('container');
+            container.addEventListener('touchstart', handleTouchStart, false);
+            container.addEventListener('touchmove', handleTouchMove, false);
+            container.addEventListener('touchend', handleTouchEnd, false);
+        });
     </script>
 </body>
 </html>
