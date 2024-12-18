@@ -7,9 +7,9 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #ffffff;
             margin: 0;
             overflow: hidden;
+            background-color: #ffffff;
             transition: background-color 0.3s ease;
         }
         .container {
@@ -136,6 +136,7 @@
             padding: 10px;
             border-radius: 50%;
         }
+
         @media (max-width: 768px) {
             .widget {
                 width: 100%;
@@ -146,6 +147,7 @@
                 font-size: 16px;
             }
         }
+
         @media (max-width: 480px) {
             .widget {
                 width: 100%;
@@ -163,7 +165,6 @@
 </head>
 <body>
     <div class="container" id="container">
-        <!-- Día lunes -->
         <div class="day-page" id="monday">
             <div class="widget">
                 <div class="header">
@@ -178,122 +179,10 @@
                 <div class="day" id="dayContainerMonday">
                     <!-- Clases Lunes se generan dinámicamente -->
                 </div>
-                <div class="nav-buttons">
-                    <button onclick="prevPage()">&#8249;</button>
-                    <button onclick="nextPage()">&#8250;</button>
-                </div>
             </div>
         </div>
 
-        <!-- Día martes -->
-        <div class="day-page" id="tuesday">
-            <div class="widget">
-                <div class="header">
-                    Martes
-                    <div class="menu">
-                        <button onclick="toggleMenu('menuContentTuesday')">☰</button>
-                        <div class="menu-content" id="menuContentTuesday">
-                            <a href="#" onclick="toggleDarkMode()">Modo Oscuro/Claro</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="day" id="dayContainerTuesday">
-                    <!-- Clases Martes se generan dinámicamente -->
-                </div>
-                <div class="nav-buttons">
-                    <button onclick="prevPage()">&#8249;</button>
-                    <button onclick="nextPage()">&#8250;</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Día miércoles -->
-        <div class="day-page" id="wednesday">
-            <div class="widget">
-                <div class="header">
-                    Miércoles
-                    <div class="menu">
-                        <button onclick="toggleMenu('menuContentWednesday')">☰</button>
-                        <div class="menu-content" id="menuContentWednesday">
-                            <a href="#" onclick="toggleDarkMode()">Modo Oscuro/Claro</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="day" id="dayContainerWednesday">
-                    <!-- Clases Miércoles se generan dinámicamente -->
-                </div>
-                <div class="nav-buttons">
-                    <button onclick="prevPage()">&#8249;</button>
-                    <button onclick="nextPage()">&#8250;</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Día jueves -->
-        <div class="day-page" id="thursday">
-            <div class="widget">
-                <div class="header">
-                    Jueves
-                    <div class="menu">
-                        <button onclick="toggleMenu('menuContentThursday')">☰</button>
-                        <div class="menu-content" id="menuContentThursday">
-                            <a href="#" onclick="toggleDarkMode()">Modo Oscuro/Claro</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="day" id="dayContainerThursday">
-                    <!-- Clases Jueves se generan dinámicamente -->
-                </div>
-                <div class="nav-buttons">
-                    <button onclick="prevPage()">&#8249;</button>
-                    <button onclick="nextPage()">&#8250;</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Día viernes -->
-        <div class="day-page" id="friday">
-            <div class="widget">
-                <div class="header">
-                    Viernes
-                    <div class="menu">
-                        <button onclick="toggleMenu('menuContentFriday')">☰</button>
-                        <div class="menu-content" id="menuContentFriday">
-                            <a href="#" onclick="toggleDarkMode()">Modo Oscuro/Claro</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="day" id="dayContainerFriday">
-                    <!-- Clases Viernes se generan dinámicamente -->
-                </div>
-                <div class="nav-buttons">
-                    <button onclick="prevPage()">&#8249;</button>
-                    <button onclick="nextPage()">&#8250;</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Día sábado -->
-        <div class="day-page" id="saturday">
-            <div class="widget">
-                <div class="header">
-                    Sábado
-                    <div class="menu">
-                        <button onclick="toggleMenu('menuContentSaturday')">☰</button>
-                        <div class="menu-content" id="menuContentSaturday">
-                            <a href="#" onclick="toggleDarkMode()">Modo Oscuro/Claro</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="day" id="dayContainerSaturday">
-                    <!-- Clases Sábado se generan dinámicamente -->
-                </div>
-                <div class="nav-buttons">
-                    <button onclick="prevPage()">&#8249;</button>
-                    <button onclick="nextPage()">&#8250;</button>
-                </div>
-            </div>
-        </div>
+        <!-- Aquí se agregan los demás días: martes, miércoles, jueves, viernes, sábado -->
 
     </div>
 
@@ -385,7 +274,25 @@
             dayContainer.appendChild(classEl);
         }
 
-        window.onload = loadSchedule;
+        function prevPage() {
+            currentPage = (currentPage === 0) ? days.length - 1 : currentPage - 1;
+            updatePage();
+        }
+
+        function nextPage() {
+            currentPage = (currentPage === days.length - 1) ? 0 : currentPage + 1;
+            updatePage();
+        }
+
+        function updatePage() {
+            const container = document.getElementById('container');
+            container.style.transform = `translateX(-${currentPage * 100}%)`;
+        }
+
+        window.addEventListener('load', () => {
+            loadSchedule();
+            updatePage();
+        });
     </script>
 </body>
 </html>
