@@ -34,7 +34,7 @@
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
             padding: 20px;
             width: 90%;
-            max-height: 80vh;
+            max-height: calc(100vh - 80px); /* Ajuste para evitar el desbordamiento */
             overflow-y: auto;
             transition: background-color 0.3s ease, box-shadow 0.3s ease;
             z-index: 1;
@@ -83,6 +83,7 @@
         .day {
             overflow-y: auto;
             flex-grow: 1;
+            padding-bottom: 50px; /* Añadido para dar espacio al contenedor de los botones */
         }
         .class {
             padding: 10px;
@@ -123,9 +124,10 @@
         .nav-buttons {
             display: flex;
             justify-content: center;
-            position: absolute;
-            bottom: 10px;
+            position: fixed;
+            bottom: 20px; /* Fijo en la parte inferior de la pantalla */
             width: 100%;
+            z-index: 10;
         }
         .nav-buttons button {
             background: rgba(0, 0, 0, 0.5);
@@ -174,10 +176,6 @@
                 <div class="day" id="dayContainerMonday">
                     <!-- Las clases se generarán dinámicamente -->
                 </div>
-                <div class="nav-buttons">
-                    <button onclick="prevPage()">&#8249;</button>
-                    <button onclick="nextPage()">&#8250;</button>
-                </div>
             </div>
         </div>
         <div class="day-page" id="tuesday">
@@ -194,13 +192,61 @@
                 <div class="day" id="dayContainerTuesday">
                     <!-- Las clases se generarán dinámicamente -->
                 </div>
-                <div class="nav-buttons">
-                    <button onclick="prevPage()">&#8249;</button>
-                    <button onclick="nextPage()">&#8250;</button>
+            </div>
+        </div>
+        <div class="day-page" id="wednesday">
+            <div class="widget">
+                <div class="header">
+                    Miércoles
+                    <div class="menu">
+                        <button onclick="toggleMenu('menuContentWednesday')">☰</button>
+                        <div class="menu-content" id="menuContentWednesday">
+                            <a href="#" onclick="toggleDarkMode()">Modo Oscuro/Claro</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="day" id="dayContainerWednesday">
+                    <!-- Las clases se generarán dinámicamente -->
                 </div>
             </div>
         </div>
-        <!-- Puedes agregar más días aquí -->
+        <div class="day-page" id="thursday">
+            <div class="widget">
+                <div class="header">
+                    Jueves
+                    <div class="menu">
+                        <button onclick="toggleMenu('menuContentThursday')">☰</button>
+                        <div class="menu-content" id="menuContentThursday">
+                            <a href="#" onclick="toggleDarkMode()">Modo Oscuro/Claro</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="day" id="dayContainerThursday">
+                    <!-- Las clases se generarán dinámicamente -->
+                </div>
+            </div>
+        </div>
+        <div class="day-page" id="friday">
+            <div class="widget">
+                <div class="header">
+                    Viernes
+                    <div class="menu">
+                        <button onclick="toggleMenu('menuContentFriday')">☰</button>
+                        <div class="menu-content" id="menuContentFriday">
+                            <a href="#" onclick="toggleDarkMode()">Modo Oscuro/Claro</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="day" id="dayContainerFriday">
+                    <!-- Las clases se generarán dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-buttons">
+        <button onclick="prevPage()">&#8249;</button>
+        <button onclick="nextPage()">&#8250;</button>
     </div>
 
     <input type="color" id="hiddenColorPicker" style="display: none;" onchange="updateColor(this)">
