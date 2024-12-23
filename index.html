@@ -144,6 +144,16 @@
             opacity: 1;
             transition: opacity 0.3s;
         }
+
+        .watermark-right {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 15%;
+            max-width: 50px;
+            opacity: 1;
+            transition: opacity 0.3s;
+        }
     </style>
 </head>
 <body>
@@ -151,6 +161,7 @@
         <div class="clock-widget" id="clock">
             <span class="clock-text" id="clock-text">00:00</span>
             <img id="watermark" src="https://i.postimg.cc/tJYWLWcm/20241220-233713-0000.png" alt="Marca de agua" class="watermark">
+            <img id="watermark-right" src="https://i.postimg.cc/J0H1pZjQ/20241223-005656-0000.png" alt="Marca de agua derecha" class="watermark-right">
         </div>
         <button class="toggle-button" id="toggle-btn">&#9788;</button>
         <button class="menu-button" id="menu-btn">&#9776;</button>
@@ -187,6 +198,7 @@
         const timezoneSelector = document.getElementById('timezone');
         const appearanceSelector = document.getElementById('appearance');
         const watermark = document.getElementById('watermark');
+        const watermarkRight = document.getElementById('watermark-right');
 
         const timezones = Intl.supportedValuesOf('timeZone');
         timezones.forEach(tz => {
@@ -246,8 +258,12 @@
 
             if (appearance === 'light') {
                 watermark.src = 'https://i.postimg.cc/bJ61C3mt/20241220-233700-0000.png';
+                watermarkRight.style.display = 'none';
+            } else if (appearance === 'lantern') {
+                watermarkRight.style.display = 'block';
             } else {
-                watermark.src = 'https://i.postimg.cc/tJYWLWcm/20241220-233713-0000.png';
+                watermark.src = 'https://i.postimg.cc/tJYWLWcm/20241220-233713-0000.png'; /* Imagen correcta para el modo oscuro */
+                watermarkRight.style.display = 'none';
             }
 
             saveSettings();
