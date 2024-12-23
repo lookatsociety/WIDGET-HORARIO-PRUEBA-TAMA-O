@@ -127,7 +127,7 @@
         }
 
         .lantern-mode {
-            background-color: #191919; /* Fondo oscuro de Notion */
+            background-color: #191919;
         }
 
         .lantern-mode .menu {
@@ -188,7 +188,6 @@
         const appearanceSelector = document.getElementById('appearance');
         const watermark = document.getElementById('watermark');
 
-        // Llenar el selector con zonas horarias
         const timezones = Intl.supportedValuesOf('timeZone');
         timezones.forEach(tz => {
             const option = document.createElement('option');
@@ -197,7 +196,6 @@
             timezoneSelector.appendChild(option);
         });
 
-        // Cargar configuraciones desde LocalStorage
         function loadSettings() {
             const savedFormat = localStorage.getItem('clockFormat');
             const savedTimezone = localStorage.getItem('clockTimezone');
@@ -217,7 +215,6 @@
             }
         }
 
-        // Guardar configuraciones en LocalStorage
         function saveSettings() {
             localStorage.setItem('clockFormat', format);
             localStorage.setItem('clockTimezone', timezone);
@@ -229,24 +226,30 @@
             let hours = now.getHours();
             const minutes = now.getMinutes().toString().padStart(2, '0');
 
-            if (format === 12) {
+            if (timezone !== 'local') {
+                const options = { timeZone: timezone, hour: '2-digit', minute: '2-digit', hour12: format === 12 };
+                const formatter = new Intl.DateTimeFormat('es-ES', options);
+                const timeParts = formatter.formatToParts(now);
+
+                hours = timeParts.find(part => part.type === 'hour').value;
+            } else if (format === 12) {
                 hours = hours % 12 || 12;
             }
 
-            let timeString;
-            if (timezone !== 'local') {
-                const options = { timeZone: timezone, hour: '2-digit', minute: '2-digit', hour12: format === 12 };
-                timeString = new Intl.DateTimeFormat('es-ES', options).format(now);
-            } else {
-                timeString = `${hours.toString().padStart(2, '0')}:${minutes}`;
-            }
-
+            const timeString = `${hours.toString().padStart(2, '0')}:${minutes}`;
             document.getElementById('clock-text').textContent = timeString;
         }
 
         function applyAppearance() {
             document.body.className = '';
             document.body.classList.add(`${appearance}-mode`);
+
+            if (appearance === 'light') {
+                watermark.src = 'https://i.postimg.cc/bJ61C3mt/20241220-233700-0000.png';
+            } else {
+                watermark.src = 'https://i.postimg.cc/tJYWLWcm/20241220-233713-0000.png';
+            }
+
             saveSettings();
         }
 
