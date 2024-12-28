@@ -3,302 +3,414 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Widget de Reloj</title>
+    <title>Horario de Clases</title>
     <style>
         body {
-            margin: 0;
             font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #191919;
-            transition: background-color 0.3s;
+            background-color: #ffffff;
+            margin: 0;
+            overflow: hidden;
+            transition: background-color 0.3s ease;
         }
-
         .container {
-            position: relative;
-        }
-
-        .clock-widget {
-            width: 90vw;
-            max-width: 300px;
-            height: 90vw;
-            max-height: 300px;
-            border-radius: 15px;
-            background-color: #1f1f1f;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             display: flex;
-            align-items: center;
+            transition: transform 0.5s ease;
+            width: 100%;
+            touch-action: pan-y;
+        }
+        .day-page {
+            min-width: 100%;
+            height: 100vh;
+            display: flex;
             justify-content: center;
-            color: #fff;
-            text-align: center;
-            transition: background-color 0.3s, color 0.3s;
+            align-items: flex-start; /* Alinea el contenido en la parte superior */
             position: relative;
         }
-
-        .clock-text {
-            font-size: clamp(46px, 16vw, 80px); /* Tamaño incrementado para mayor visibilidad */
-            line-height: 1;
-            white-space: nowrap;
-            transition: font-size 0.3s ease;
+        .widget {
+            background-color: #f5f5f5;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            width: 300px;
+            max-height: 70vh; /* Ajusta la altura máxima del widget */
+            overflow-y: auto; /* Habilita el desplazamiento vertical */
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            z-index: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
         }
-
-        .toggle-button, .menu-button {
+        .header {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 18px;
+            position: relative;
+        }
+        .day {
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+        .class {
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            color: #ffffff;
+            cursor: pointer;
+            position: relative;
+        }
+        .class .color-picker {
             position: absolute;
-            width: 35px;
-            height: 35px;
-            background-color: #333;
-            color: #fff;
-            border: none;
+            top: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             cursor: pointer;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.3s, color 0.3s;
+            background: none;
+            border: 2px solid #fff;
         }
-
-        .toggle-button {
-            top: 10px;
-            right: 10px;
+        .class .time, .class .location {
+            font-size: 12px;
         }
-
-        .menu-button {
-            top: 10px;
-            left: 10px;
+        .editable {
+            border: none;
+            background: transparent;
+            color: #ffffff;
+            width: 100%;
         }
-
         .menu {
             position: absolute;
-            top: 50px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 280px;
-            max-width: 90vw;
-            background-color: #1f1f1f;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            padding: 15px;
-            display: none;
-            flex-direction: column;
-            gap: 15px;
-            color: #fff;
-            font-size: 14px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .menu select, .menu label {
-            background-color: #333;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            padding: 10px;
-            width: 100%;
-            font-size: 16px;
-        }
-
-        .light-mode .clock-widget {
-            background-color: #FFFFFFF8;
-            color: #333;
-        }
-
-        .light-mode {
-            background-color: #FFFFFFF8;
-        }
-
-        .light-mode .toggle-button,
-        .light-mode .menu-button {
-            background-color: #FFFFFFF8;
-            color: #333;
-        }
-
-        .light-mode .menu {
-            background-color: #FFFFFFF8;
-            color: #333;
-        }
-
-        /* Modo farol */
-        .lantern-mode .clock-widget {
-            background-color: #FF4500;
-            color: #FFFF00;
-        }
-
-        .lantern-mode {
-            background-color: #191919;
-        }
-
-        .lantern-mode .menu {
-            background-color: #191919;
-            color: #FFFF00;
-        }
-
-        .watermark {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            width: 15%;
-            max-width: 50px;
-            opacity: 1;
-            transition: opacity 0.3s;
-        }
-
-        .watermark-right {
-            position: absolute;
-            bottom: 10px;
+            top: -10px;
             right: 10px;
-            width: 15%;
-            max-width: 50px;
-            opacity: 1;
-            transition: opacity 0.3s;
+            z-index: 2;
+        }
+        .menu button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+        }
+        .menu-content {
+            display: none;
+            position: absolute;
+            top: 30px;
+            right: 0;
+            background: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 3;
+        }
+        .menu-content a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #000;
+        }
+        .menu-content a:hover {
+            background-color: #f0f0f0;
+        }
+        .dark-mode {
+            background-color: #191919;
+        }
+        .dark-mode .widget {
+            background-color: #1F1F1F;
+            color: #ffffff;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 10px;
+        }
+        .nav-buttons button {
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="clock-widget" id="clock">
-            <span class="clock-text" id="clock-text">00:00</span>
-            <img id="watermark" src="https://i.postimg.cc/tJYWLWcm/20241220-233713-0000.png" alt="Marca de agua" class="watermark">
-            <img id="watermark-right" src="https://i.postimg.cc/J0H1pZjQ/20241223-005656-0000.png" alt="Marca de agua derecha" class="watermark-right">
+    <!-- Aquí se mantiene TODO el contenido original -->
+    <!-- Por favor, indícame si necesitas que lo ajuste o corrija -->
+</body>
+</html>
+    <div class="container" id="container">
+        <div class="day-page" id="monday">
+            <div class="widget">
+                <div class="header">
+                    Lunes
+                    <div class="menu">
+                        <button onclick="toggleMenu('menuContentMonday')">☰</button>
+                        <div class="menu-content" id="menuContentMonday">
+                            <a href="#" onclick="toggleDarkMode()">Modo Oscuro/Claro</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="day" id="dayContainerMonday">
+                    <!-- Clases se generan dinámicamente -->
+                </div>
+                <div class="nav-buttons">
+                    <button onclick="prevPage()">&#8249;</button>
+                    <button onclick="nextPage()">&#8250;</button>
+                </div>
+            </div>
         </div>
-        <button class="toggle-button" id="toggle-btn">&#9788;</button>
-        <button class="menu-button" id="menu-btn">&#9776;</button>
-
-        <div class="menu" id="config-menu">
-            <label>
-                Formato:
-                <select id="format">
-                    <option value="24">24 horas</option>
-                    <option value="12">12 horas</option>
-                </select>
-            </label>
-            <label>
-                Zona Horaria:
-                <select id="timezone"></select>
-            </label>
-            <label>
-                Modo de Apariencia:
-                <select id="appearance">
-                    <option value="default">Predeterminado</option>
-                    <option value="light">Claro</option>
-                    <option value="lantern">Farol</option>
-                </select>
-            </label>
+        <div class="day-page" id="tuesday">
+            <div class="widget">
+                <div class="header">
+                    Martes
+                    <div class="menu">
+                        <button onclick="toggleMenu('menuContentTuesday')">☰</button>
+                        <div class="menu-content" id="menuContentTuesday">
+                            <a href="#" onclick="toggleDarkMode()">Modo Oscuro/Claro</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="day" id="dayContainerTuesday">
+                    <!-- Clases se generan dinámicamente -->
+                </div>
+                <div class="nav-buttons">
+                    <button onclick="prevPage()">&#8249;</button>
+                    <button onclick="nextPage()">&#8250;</button>
+                </div>
+            </div>
+        </div>
+        <div class="day-page" id="wednesday">
+            <div class="widget">
+                <div class="header">
+                    Miércoles
+                    <div class="menu">
+                        <button onclick="toggleMenu('menuContentWednesday')">☰</button>
+                        <div class="menu-content" id="menuContentWednesday">
+                            <a href="#" onclick="toggleDarkMode()">Modo Oscuro/Claro</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="day" id="dayContainerWednesday">
+                    <!-- Clases se generan dinámicamente -->
+                </div>
+                <div class="nav-buttons">
+                    <button onclick="prevPage()">&#8249;</button>
+                    <button onclick="nextPage()">&#8250;</button>
+                </div>
+            </div>
+        </div>
+        <div class="day-page" id="thursday">
+            <div class="widget">
+                <div class="header">
+                    Jueves
+                    <div class="menu">
+                        <button onclick="toggleMenu('menuContentThursday')">☰</button>
+                        <div class="menu-content" id="menuContentThursday">
+                            <a href="#" onclick="toggleDarkMode()">Modo Oscuro/Claro</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="day" id="dayContainerThursday">
+                    <!-- Clases se generan dinámicamente -->
+                </div>
+                <div class="nav-buttons">
+                    <button onclick="prevPage()">&#8249;</button>
+                    <button onclick="nextPage()">&#8250;</button>
+                </div>
+            </div>
+        </div>
+        <div class="day-page" id="friday">
+            <div class="widget">
+                <div class="header">
+                    Viernes
+                    <div class="menu">
+                        <button onclick="toggleMenu('menuContentFriday')">☰</button>
+                        <div class="menu-content" id="menuContentFriday">
+                            <a href="#" onclick="toggleDarkMode()">Modo Oscuro/Claro</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="day" id="dayContainerFriday">
+                    <!-- Clases se generan dinámicamente -->
+                </div>
+                <div class="nav-buttons">
+                    <button onclick="prevPage()">&#8249;</button>
+                    <button onclick="nextPage()">&#8250;</button>
+                </div>
+            </div>
+        </div>
+        <div class="day-page" id="saturday">
+            <div class="widget">
+                <div class="header">
+                    Sábado
+                    <div class="menu">
+                        <button onclick="toggleMenu('menuContentSaturday')">☰</button>
+                        <div class="menu-content" id="menuContentSaturday">
+                            <a href="#" onclick="toggleDarkMode()">Modo Oscuro/Claro</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="day" id="dayContainerSaturday">
+                    <!-- Clases se generan dinámicamente -->
+                </div>
+                <div class="nav-buttons">
+                    <button onclick="prevPage()">&#8249;</button>
+                    <button onclick="nextPage()">&#8250;</button>
+                </div>
+            </div>
         </div>
     </div>
-
+    <input type="color" id="hiddenColorPicker" style="display: none;" onchange="updateColor(this)">
     <script>
-        let format = 24;
-        let timezone = 'local';
-        let appearance = 'default';
+        let currentPage = 0;
+        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-        const formatSelect = document.getElementById('format');
-        const timezoneSelector = document.getElementById('timezone');
-        const appearanceSelector = document.getElementById('appearance');
-        const watermark = document.getElementById('watermark');
-        const watermarkRight = document.getElementById('watermark-right');
+        function toggleMenu(menuId) {
+            const menuContent = document.getElementById(menuId);
+            menuContent.style.display = menuContent.style.display === 'block' ? 'none' : 'block';
+        }
 
-        const timezones = Intl.supportedValuesOf('timeZone');
-        timezones.forEach(tz => {
-            const option = document.createElement('option');
-            option.value = tz;
-            option.textContent = tz;
-            timezoneSelector.appendChild(option);
-        });
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDarkMode);
+        }
 
-        function loadSettings() {
-            const savedFormat = localStorage.getItem('clockFormat');
-            const savedTimezone = localStorage.getItem('clockTimezone');
-            const savedAppearance = localStorage.getItem('appearance');
+        function openColorPicker(element) {
+            const colorPicker = document.getElementById('hiddenColorPicker');
+            colorPicker.targetElement = element;
+            colorPicker.click();
+        }
 
-            if (savedFormat) {
-                format = parseInt(savedFormat);
-                formatSelect.value = savedFormat;
-            }
-            if (savedTimezone) {
-                timezone = savedTimezone;
-                timezoneSelector.value = savedTimezone;
-            }
-            if (savedAppearance) {
-                appearance = savedAppearance;
-                applyAppearance();
+        function updateColor(colorPicker) {
+            const element = colorPicker.targetElement;
+            const classElement = element.closest('.class');
+            classElement.style.backgroundColor = colorPicker.value;
+            element.style.backgroundColor = colorPicker.value;
+            saveSchedule();
+        }
+
+        function saveSchedule() {
+            days.forEach(day => {
+                const classes = document.querySelectorAll(`#dayContainer${day} .class`);
+                const schedule = [];
+
+                classes.forEach(classEl => {
+                    const subject = classEl.querySelector('.subject').value;
+                    const time = classEl.querySelector('.time').value;
+                    const location = classEl.querySelector('.location') ? classEl.querySelector('.location').value : '';
+                    const color = classEl.style.backgroundColor;
+
+                    schedule.push({ subject, time, location, color });
+                });
+
+                localStorage.setItem(`schedule${day}`, JSON.stringify(schedule));
+            });
+        }
+
+        function loadSchedule() {
+            days.forEach(day => {
+                const schedule = JSON.parse(localStorage.getItem(`schedule${day}`));
+                if (schedule) {
+                    schedule.forEach(classData => {
+                        addClassElement(day, classData);
+                    });
+                } else {
+                    const defaultClasses = [
+                        { subject: 'Física', time: '8:00 AM - 9:30 AM', location: 'Lab 1', color: '#4a90e2' },
+                        { subject: 'Dibujo', time: '9:30 AM - 11:00 AM', location: 'Aula 1', color: '#f5a623' },
+                        { subject: 'Inglés', time: '11:00 AM - 2:00 PM', location: 'Lab 2', color: '#7ed321' },
+                        { subject: 'Filosofía', time: '2:00 PM - 4:00 PM', location: 'Lab 9b', color: '#50e3c2' },
+                        { subject: 'Ciencias Naturales', time: '4:00 PM - 6:00 PM', location: 'Lab 2a', color: '#d0021b' },
+                        { subject: 'Mates', time: '6:00 PM - 7:00 PM', location: 'Aula 3.4.1', color: '#9013fe' }
+                    ];
+                    defaultClasses.forEach(classData => {
+                        addClassElement(day, classData);
+                    });
+                }
+            });
+        }
+
+        function addClassElement(day, { subject, time, location, color }) {
+            const dayContainer = document.getElementById(`dayContainer${day}`);
+            if (!dayContainer) return; // Evitar el error si el contenedor no existe
+            const classEl = document.createElement('div');
+            classEl.className = 'class';
+            classEl.style.backgroundColor = color;
+
+            classEl.innerHTML = `
+                <div class="color-picker" onclick="openColorPicker(this)" style="background-color: ${color};"></div>
+                <input class="editable subject" value="${subject}">
+                <input class="editable time" value="${time}">
+                <input class="editable location" value="${location}">
+            `;
+
+            classEl.querySelectorAll('.editable').forEach(input => {
+                input.addEventListener('input', saveSchedule);
+            });
+
+            dayContainer.appendChild(classEl);
+        }
+
+        function nextPage() {
+            if (currentPage < days.length - 1) {
+                currentPage++;
+                updatePage();
             }
         }
 
-        function saveSettings() {
-            localStorage.setItem('clockFormat', format);
-            localStorage.setItem('clockTimezone', timezone);
-            localStorage.setItem('appearance', appearance);
+        function prevPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                updatePage();
+            }
         }
 
-        function updateClock() {
-            const now = new Date();
-            let hours = now.getHours();
-            const minutes = now.getMinutes().toString().padStart(2, '0');
+        function updatePage() {
+            const container = document.getElementById('container');
+            container.style.transform = `translateX(-${currentPage * 100}%)`;
+        }
 
-            if (timezone !== 'local') {
-                const options = { timeZone: timezone, hour: '2-digit', minute: '2-digit', hour12: format === 12 };
-                const formatter = new Intl.DateTimeFormat('es-ES', options);
-                const timeParts = formatter.formatToParts(now);
+        let startX = 0;
+        let currentX = 0;
 
-                hours = timeParts.find(part => part.type === 'hour').value;
-            } else if (format === 12) {
-                hours = hours % 12 || 12;
+        function handleTouchStart(evt) {
+            const firstTouch = evt.touches[0];
+            startX = firstTouch.clientX;
+        }
+
+        function handleTouchMove(evt) {
+            if (!startX) return;
+
+            const currentTouch = evt.touches[0];
+            currentX = currentTouch.clientX - startX;
+        }
+
+        function handleTouchEnd() {
+            if (currentX < -50) {
+                nextPage();
+            } else if (currentX > 50) {
+                prevPage();
+            }
+            startX = 0;
+            currentX = 0;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSchedule();
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
             }
 
-            const timeString = `${hours.toString().padStart(2, '0')}:${minutes}`;
-            document.getElementById('clock-text').textContent = timeString;
-        }
-
-        function applyAppearance() {
-            document.body.className = '';
-            document.body.classList.add(`${appearance}-mode`);
-
-            if (appearance === 'light') {
-                watermark.src = 'https://i.postimg.cc/bJ61C3mt/20241220-233700-0000.png';
-                watermarkRight.style.display = 'none';
-            } else if (appearance === 'lantern') {
-                watermarkRight.style.display = 'block';
-            } else {
-                watermark.src = 'https://i.postimg.cc/tJYWLWcm/20241220-233713-0000.png'; /* Imagen correcta para el modo oscuro */
-                watermarkRight.style.display = 'none';
-            }
-
-            saveSettings();
-        }
-
-        setInterval(updateClock, 1000);
-        updateClock();
-        loadSettings();
-
-        document.getElementById('toggle-btn').addEventListener('click', () => {
-            appearance = appearance === 'light' ? 'default' : 'light';
-            applyAppearance();
-        });
-
-        document.getElementById('menu-btn').addEventListener('click', () => {
-            const menu = document.getElementById('config-menu');
-            menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
-        });
-
-        formatSelect.addEventListener('change', (e) => {
-            format = parseInt(e.target.value);
-            saveSettings();
-            updateClock();
-        });
-
-        timezoneSelector.addEventListener('change', (e) => {
-            timezone = e.target.value;
-            saveSettings();
-            updateClock();
-        });
-
-        appearanceSelector.addEventListener('change', (e) => {
-            appearance = e.target.value;
-            applyAppearance();
+            const container = document.getElementById('container');
+            container.addEventListener('touchstart', handleTouchStart, false);
+            container.addEventListener('touchmove', handleTouchMove, false);
+            container.addEventListener('touchend', handleTouchEnd, false);
         });
     </script>
 </body>
 </html>
+
