@@ -6,14 +6,14 @@
     <title>COFFEE TRACKER</title>
     <style>
         :root {
-            --light-bg: #f5f5f5;
+            --notion-light-bg: #fafafa;
             --dark-bg: #191919;
             --light-text: #222;
-            --dark-text: #f5f5f5;
+            --dark-text: #cfcfcf; /* Cambiado para mejor visibilidad en modo oscuro */
             --button-bg: #e0e0e0;
             --accent-bg: #333;
             --highlight: #ffffff;
-            --shadow-light: rgba(0, 0, 0, 0.05);
+            --shadow-light: rgba(0, 0, 0, 0.15);
             --shadow-dark: rgba(255, 255, 255, 0.05);
         }
         body {
@@ -23,7 +23,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background: var(--light-bg);
+            background: var(--notion-light-bg);
             font-family: 'Inter', sans-serif;
             color: var(--light-text);
             transition: background 0.3s, color 0.3s;
@@ -43,6 +43,13 @@
             font-weight: 600;
             margin: 0;
             position: relative;
+        }
+        .date {
+            font-size: 12px;
+            margin-top: 5px;
+            color: var(--light-text);
+            opacity: 0.8;
+            transition: color 0.3s;
         }
         .mode-toggle {
             width: 16px;
@@ -67,6 +74,7 @@
             margin-left: 5px;
             color: var(--light-text);
             opacity: 0.8;
+            transition: color 0.3s;
         }
         .buttons {
             display: flex;
@@ -111,6 +119,7 @@
 
 <div class="tracker-container">
     <h1>Coffee Tracker</h1>
+    <p class="date" id="currentDate"></p>
     <button class="mode-toggle" id="modeToggle"></button>
     <div class="cup-count">
         <span id="cupCount">0</span>
@@ -128,27 +137,44 @@
     const caffeineMgElement = document.getElementById('caffeineMg');
     const notificationElement = document.getElementById('notification');
     const modeToggle = document.getElementById('modeToggle');
-    let cupCount = 0;
+    const currentDateElement = document.getElementById('currentDate');
+    let cupCount = localStorage.getItem('cupCount') ? parseInt(localStorage.getItem('cupCount')) : 0;
     const caffeinePerCup = 95;
     const warningLimit = 3;
     const dangerLimit = 5;
-    let darkMode = false;
+    let darkMode = localStorage.getItem('darkMode') === 'true';
+
+    function updateDate() {
+        const today = new Date();
+        const todayString = today.toISOString().split('T')[0];
+        const storedDate = localStorage.getItem('currentDate');
+
+        if (storedDate !== todayString) {
+            localStorage.setItem('currentDate', todayString);
+            resetCups();
+        }
+
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        currentDateElement.textContent = today.toLocaleDateString('es-ES', options);
+    }
 
     function incrementCups() {
         cupCount++;
+        localStorage.setItem('cupCount', cupCount);
         updateDisplay();
         checkLimits();
     }
 
     function resetCups() {
         cupCount = 0;
+        localStorage.setItem('cupCount', cupCount);
         updateDisplay();
         notificationElement.style.display = 'none';
     }
 
     function updateDisplay() {
         cupCountElement.textContent = cupCount;
-        caffeineMgElement.textContent = `(${cupCount * caffeinePerCup} mg)`;
+        caffeineMgElement.textContent = cupCount > 0 ? `(${cupCount * caffeinePerCup} mg)` : "(0 mg)";
     }
 
     function checkLimits() {
@@ -169,10 +195,33 @@
 
     modeToggle.addEventListener('click', () => {
         darkMode = !darkMode;
-        document.body.style.background = darkMode ? 'var(--dark-bg)' : 'var(--light-bg)';
-        document.body.style.color = darkMode ? 'var(--dark-text)' : 'var(--light-text)';
-        document.querySelector('.tracker-container').style.background = darkMode ? 'var(--dark-bg)' : 'var(--highlight)';
-        document.querySelector('.tracker-container').style.boxShadow = darkMode ? `0 4px 12px var(--shadow-dark)` : `0 4px 12px var(--shadow-light)`;
+        if (darkMode) enableDarkMode();
+        else disableDarkMode();
+        localStorage.setItem('darkMode', darkMode);
+    });
+
+    function enableDarkMode() {
+        document.body.style.background = 'var(--dark-bg)';
+        document.body.style.color = 'var(--dark-text)';
+        document.querySelector('.tracker-container').style.background = 'var(--dark-bg)';
+        document.querySelector('.tracker-container').style.boxShadow = `0 4px 12px var(--shadow-dark)`;
+        currentDateElement.style.color = 'white';
+        caffeineMgElement.style.color = 'white';
+    }
+
+    function disableDarkMode() {
+        document.body.style.background = 'var(--notion-light-bg)';
+        document.body.style.color = 'var(--light-text)';
+        document.querySelector('.tracker-container').style.background = 'var(--highlight)';
+        document.querySelector('.tracker-container').style.boxShadow = `0 4px 12px var(--shadow-light)`;
+        currentDateElement.style.color = 'var(--light-text)';
+        caffeineMgElement.style.color = 'var(--light-text)';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        updateDate();
+        updateDisplay();
+        if (darkMode) enableDarkMode();
     });
 </script>
 
