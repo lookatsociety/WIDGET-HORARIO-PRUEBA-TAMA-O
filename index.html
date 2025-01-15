@@ -209,8 +209,8 @@
 
     function incrementCups() {
         cupCount++;
-        energyLevel += 20; // Incrementa el nivel de energía por cada taza
-        cortisolLevel += 10; // Incrementa el nivel de cortisol por cada taza
+        energyLevel += 20; // Incremento fijo por taza
+        cortisolLevel += 10;
         localStorage.setItem('cupCount', cupCount);
         localStorage.setItem('energyLevel', energyLevel);
         localStorage.setItem('cortisolLevel', cortisolLevel);
@@ -258,12 +258,12 @@
         const caffeineHalfLife = 300; // Vida media en minutos (5 horas)
         const cortisolDecayFastRate = 0.5; // Reducción rápida inicial por minuto (primera hora)
         const cortisolDecaySlowRate = 0.1; // Reducción lenta por minuto (después de la primera hora)
-        const reductionRate = 100 / caffeineHalfLife; // Reducción de energía por minuto
+        const reductionRate = 100 / caffeineHalfLife; // Reducción porcentual por minuto
 
         // Reducir energía basado en la vida media de la cafeína
         if (energyLevel > 0) {
-            energyLevel -= reductionRate; 
-            if (energyLevel < 0) energyLevel = 0; // Evita valores negativos
+            energyLevel -= reductionRate;
+            if (energyLevel < 0) energyLevel = 0; // Asegurarse de que no sea negativo
         }
 
         // Reducir cortisol basado en dos fases: rápida y lenta
@@ -273,12 +273,12 @@
             } else {
                 cortisolLevel -= cortisolDecaySlowRate; // Fase lenta
             }
-            if (cortisolLevel < 0) cortisolLevel = 0; // Evita valores negativos
+            if (cortisolLevel < 0) cortisolLevel = 0; // Asegurarse de que no sea negativo
         }
 
         // Guardar niveles actualizados
-        localStorage.setItem('energyLevel', energyLevel);
-        localStorage.setItem('cortisolLevel', cortisolLevel);
+        localStorage.setItem('energyLevel', energyLevel.toFixed(2));
+        localStorage.setItem('cortisolLevel', cortisolLevel.toFixed(2));
 
         // Actualizar la visualización
         updateDisplay();
