@@ -231,11 +231,11 @@
 
     function updateDisplay() {
         cupCountElement.textContent = cupCount;
-        caffeineMgElement.textContent = cupCount > 0 ? `(${cupCount * caffeinePerCup} mg)` : "(0 mg)";
-        energyBar.style.width = `${Math.min(energyLevel, 100)}%`;
-        cortisolBar.style.width = `${Math.min(cortisolLevel, 100)}%`;
-        energyLabel.textContent = `Energía: ${Math.round(energyLevel)}%`;
-        cortisolLabel.textContent = `Cortisol: ${Math.round(cortisolLevel)}%`;
+        caffeineMgElement.textContent = cupCount > 0 ? `(${(cupCount * caffeinePerCup).toFixed(2)} mg)` : "(0 mg)";
+        energyBar.style.width = `${Math.min(energyLevel, 100).toFixed(2)}%`;
+        cortisolBar.style.width = `${Math.min(cortisolLevel, 100).toFixed(2)}%`;
+        energyLabel.textContent = `Energía: ${energyLevel.toFixed(2)}%`;
+        cortisolLabel.textContent = `Cortisol: ${cortisolLevel.toFixed(2)}%`;
     }
 
     function checkLimits() {
