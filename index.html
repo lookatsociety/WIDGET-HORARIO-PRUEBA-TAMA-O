@@ -9,12 +9,14 @@
             --notion-light-bg: #ffffff;
             --dark-bg: #191919;
             --light-text: #222;
-            --dark-text: #cfcfcf; /* Cambiado para mejor visibilidad en modo oscuro */
+            --dark-text: #cfcfcf;
             --button-bg: #e0e0e0;
             --accent-bg: #333;
             --highlight: #ffffff;
             --shadow-light: rgba(0, 0, 0, 0.15);
             --shadow-dark: rgba(255, 255, 255, 0.05);
+            --bar-energy-color: #545454; /* Verde energía */
+            --bar-cortisol-color: #545454; /* Rojo cortisol */
         }
         body {
             margin: 0;
@@ -113,6 +115,39 @@
             background: #ef5350;
             color: white;
         }
+        .bar-container {
+            display: flex;
+            flex-direction: column;
+            margin-top: 10px;
+        }
+        .bar {
+            height: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+        .energy-bar {
+            background: var(--bar-energy-color);
+        }
+        .cortisol-bar {
+            background: var(--bar-cortisol-color);
+        }
+        .bar-label {
+            font-size: 12px;
+            margin: 2px 0;
+            color: var(--light-text);
+        }
+
+        /* Modificar el color del texto de energía y cortisol en el modo oscuro */
+        .dark-mode .energy-label,
+        .dark-mode .cortisol-label {
+            color: white;
+        }
+
+        /* Modificar el color del texto de energía y cortisol en el modo claro */
+        .light-mode .energy-label,
+        .light-mode .cortisol-label {
+            color: black;
+        }
     </style>
 </head>
 <body>
@@ -130,6 +165,13 @@
         <button class="reset" onclick="resetCups()">Reiniciar</button>
     </div>
     <div class="notification" id="notification"></div>
+
+    <div class="bar-container">
+        <div class="bar-label energy-label">Energía</div>
+        <div class="bar energy-bar" id="energyBar" style="width: 0;"></div>
+        <div class="bar-label cortisol-label">Cortisol</div>
+        <div class="bar cortisol-bar" id="cortisolBar" style="width: 0;"></div>
+    </div>
 </div>
 
 <script>
@@ -138,7 +180,14 @@
     const notificationElement = document.getElementById('notification');
     const modeToggle = document.getElementById('modeToggle');
     const currentDateElement = document.getElementById('currentDate');
+    const energyBar = document.getElementById('energyBar');
+    const cortisolBar = document.getElementById('cortisolBar');
+    const energyLabel = document.querySelector('.energy-label');
+    const cortisolLabel = document.querySelector('.cortisol-label');
+
     let cupCount = localStorage.getItem('cupCount') ? parseInt(localStorage.getItem('cupCount')) : 0;
+    let energyLevel = localStorage.getItem('energyLevel') ? parseFloat(localStorage.getItem('energyLevel')) : 0;
+    let cortisolLevel = localStorage.getItem('cortisolLevel') ? parseFloat(localStorage.getItem('cortisolLevel')) : 0;
     const caffeinePerCup = 95;
     const warningLimit = 3;
     const dangerLimit = 5;
@@ -160,14 +209,22 @@
 
     function incrementCups() {
         cupCount++;
+        energyLevel += 10; // Incrementa el nivel de energía por cada taza
+        cortisolLevel += 5; // Incrementa el nivel de cortisol por cada taza
         localStorage.setItem('cupCount', cupCount);
+        localStorage.setItem('energyLevel', energyLevel);
+        localStorage.setItem('cortisolLevel', cortisolLevel);
         updateDisplay();
         checkLimits();
     }
 
     function resetCups() {
         cupCount = 0;
+        energyLevel = 0;
+        cortisolLevel = 0;
         localStorage.setItem('cupCount', cupCount);
+        localStorage.setItem('energyLevel', energyLevel);
+        localStorage.setItem('cortisolLevel', cortisolLevel);
         updateDisplay();
         notificationElement.style.display = 'none';
     }
@@ -175,6 +232,10 @@
     function updateDisplay() {
         cupCountElement.textContent = cupCount;
         caffeineMgElement.textContent = cupCount > 0 ? `(${cupCount * caffeinePerCup} mg)` : "(0 mg)";
+        energyBar.style.width = `${Math.min(energyLevel, 100)}%`;
+        cortisolBar.style.width = `${Math.min(cortisolLevel, 100)}%`;
+        energyLabel.textContent = `Energía: ${Math.round(energyLevel)}%`;
+        cortisolLabel.textContent = `Cortisol: ${Math.round(cortisolLevel)}%`;
     }
 
     function checkLimits() {
@@ -193,6 +254,17 @@
         notificationElement.style.display = 'block';
     }
 
+    function reduceEffects() {
+        if (energyLevel > 0) energyLevel -= 0.5;
+        if (cortisolLevel > 0) cortisolLevel -= 0.5;
+
+        localStorage.setItem('energyLevel', energyLevel);
+        localStorage.setItem('cortisolLevel', cortisolLevel);
+        updateDisplay();
+    }
+
+    setInterval(reduceEffects, 60000); // Reduce los niveles cada minuto
+
     modeToggle.addEventListener('click', () => {
         darkMode = !darkMode;
         if (darkMode) enableDarkMode();
@@ -207,6 +279,8 @@
         document.querySelector('.tracker-container').style.boxShadow = `0 4px 12px var(--shadow-dark)`;
         currentDateElement.style.color = 'white';
         caffeineMgElement.style.color = 'white';
+        document.body.classList.add('dark-mode');
+        document.body.classList.remove('light-mode');
     }
 
     function disableDarkMode() {
@@ -216,6 +290,8 @@
         document.querySelector('.tracker-container').style.boxShadow = `0 4px 12px var(--shadow-light)`;
         currentDateElement.style.color = 'var(--light-text)';
         caffeineMgElement.style.color = 'var(--light-text)';
+        document.body.classList.add('light-mode');
+        document.body.classList.remove('dark-mode');
     }
 
     document.addEventListener('DOMContentLoaded', () => {
