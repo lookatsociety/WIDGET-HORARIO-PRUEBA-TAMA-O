@@ -148,35 +148,14 @@
         .light-mode .cortisol-label {
             color: black;
         }
-        /* Estilo para el botón de información */
-        .info-icon {
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            z-index: 1;
-            width: 20px;
-            height: 20px;
-            border: none;
-            border-radius: 50%;
-            background: var(--button-bg);
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 14px;
-            font-weight: bold;
-            color: var(--light-text);
-            box-shadow: 0 2px 4px var(--shadow-light);
-        }
     </style>
 </head>
 <body>
-    <div class="tracker-container">
-        <button class="info-icon" onclick="openInfo()">!</button>
-        <h1>Coffee Tracker</h1>
-        <p class="date" id="currentDate"></p>
-        <button class="mode-toggle" id="modeToggle"></button>
-        <!-- El resto del contenido -->
+
+<div class="tracker-container">
+    <h1>Coffee Tracker</h1>
+    <p class="date" id="currentDate"></p>
+    <button class="mode-toggle" id="modeToggle"></button>
     <div class="cup-count">
         <span id="cupCount">0</span>
         <span class="caffeine-mg" id="caffeineMg">(0 mg)</span>
@@ -341,10 +320,6 @@
         updateDisplay();
         if (darkMode) enableDarkMode();
     });
-    // Función para redirigir a PubMed
-    function openInfo() {
-        window.open('https://pubmed.ncbi.nlm.nih.gov/?term=caffeine+cortisol+energy', '_blank');
-    }
 </script>
 
 </body>
