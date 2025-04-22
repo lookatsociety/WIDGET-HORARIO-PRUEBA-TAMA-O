@@ -31,7 +31,7 @@
             background-color: #f5f5f5;
             border-radius: 12px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-            padding: 8px;
+            padding: 8px 8px 0 8px;
             height: auto;
             min-height: 200px;
             max-height: 80vh;
@@ -83,6 +83,28 @@
             background: transparent;
             color: #ffffff;
             width: 100%;
+        }
+        
+        .time-inputs {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin: 5px 0;
+        }
+        
+        .time-inputs input[type="time"] {
+            border: none;
+            background: transparent;
+            color: #ffffff;
+            padding: 2px;
+        }
+        
+        .time-inputs input[type="time"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+        }
+        
+        .time-inputs span {
+            color: #ffffff;
         }
         .menu {
             position: absolute;
@@ -490,7 +512,11 @@
             classEl.innerHTML = `
                 <div class="color-picker" onclick="openColorPicker(this)" style="background-color: ${color};"></div>
                 <input class="editable subject" value="${subject}">
-                <input class="editable time" value="${time}">
+                <div class="time-inputs">
+                    <input type="time" class="editable time-start" value="${time.split(' - ')[0]}" style="width: 45%;">
+                    <span>-</span>
+                    <input type="time" class="editable time-end" value="${time.split(' - ')[1]}" style="width: 45%;">
+                </div>
                 <input class="editable location" value="${location}">
             `;
 
