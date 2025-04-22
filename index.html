@@ -3,324 +3,606 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>COFFEE TRACKER</title>
+    <title>Horario de Clases</title>
     <style>
-        :root {
-            --notion-light-bg: #ffffff;
-            --dark-bg: #191919;
-            --light-text: #222;
-            --dark-text: #cfcfcf;
-            --button-bg: #e0e0e0;
-            --accent-bg: #333;
-            --highlight: #ffffff;
-            --shadow-light: rgba(0, 0, 0, 0.15);
-            --shadow-dark: rgba(255, 255, 255, 0.05);
-            --bar-energy-color: #808080; /* Verde energía */
-            --bar-cortisol-color: #545454; /* Rojo cortisol */
-        }
         body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
             margin: 0;
-            padding: 0;
+            overflow: hidden;
+            transition: background-color 0.3s ease;
+            height: 100vh;
+            width: 100vw;
+            position: fixed;
+        }
+        .container {
+            display: flex;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 700%;
+            height: 100%;
+            touch-action: pan-x;
+            overflow: hidden;
+            position: absolute;
+            top: 0;
+            left: 0;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+        .day-page {
+            flex: 0 0 14.285714%;
+            width: 14.285714%;
+            height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background: var(--notion-light-bg);
-            font-family: 'Inter', sans-serif;
-            color: var(--light-text);
-            transition: background 0.3s, color 0.3s;
-        }
-        .tracker-container {
-            padding: 15px;
-            border-radius: 15px;
-            background: var(--highlight);
-            box-shadow: 0 4px 12px var(--shadow-light);
-            text-align: center;
-            width: 260px;
-            max-width: 90%;
             position: relative;
+            scroll-snap-align: start;
+            overflow: hidden;
         }
-        h1 {
-            font-size: 18px;
-            font-weight: 600;
-            margin: 0;
+        .widget {
+            width: 100%;
+            height: 100%;
+            max-width: none;
+            background-color: #f5f5f5;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            padding: 20px;
+            height: auto;
+            min-height: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+            z-index: 1;
             position: relative;
-        }
-        .date {
-            font-size: 12px;
-            margin-top: 5px;
-            color: var(--light-text);
-            opacity: 0.8;
-            transition: color 0.3s;
-        }
-        .mode-toggle {
-            width: 16px;
-            height: 16px;
-            border: none;
-            border-radius: 50%;
-            background: var(--button-bg);
-            cursor: pointer;
-            position: absolute;
-            top: 0;
-            right: 0;
-            margin: 5px;
-            box-shadow: 0 2px 4px var(--shadow-light);
-        }
-        .cup-count {
-            font-size: 32px;
-            font-weight: 700;
-            margin: 10px 0;
-        }
-        .caffeine-mg {
-            font-size: 12px;
-            margin-left: 5px;
-            color: var(--light-text);
-            opacity: 0.8;
-            transition: color 0.3s;
-        }
-        .buttons {
-            display: flex;
-            justify-content: space-between;
-            gap: 5px;
-        }
-        button {
-            flex: 1;
-            padding: 6px;
-            font-size: 12px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        button.increment {
-            background: var(--accent-bg);
-            color: var(--highlight);
-        }
-        button.reset {
-            background: var(--button-bg);
-            color: var(--light-text);
-        }
-        .notification {
-            margin-top: 10px;
-            padding: 8px;
-            border-radius: 8px;
-            font-size: 12px;
-            display: none;
-        }
-        .warning {
-            background: #ffe082;
-            color: var(--light-text);
-        }
-        .danger {
-            background: #ef5350;
-            color: white;
-        }
-        .bar-container {
             display: flex;
             flex-direction: column;
-            margin-top: 10px;
+            margin: 10px auto;
         }
-        .bar {
-            height: 10px;
-            border-radius: 5px;
-            margin: 5px 0;
+        .header {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 18px;
+            position: relative;
         }
-        .energy-bar {
-            background: var(--bar-energy-color);
+        .day {
+            overflow-y: auto;
+            flex-grow: 1;
         }
-        .cortisol-bar {
-            background: var(--bar-cortisol-color);
+        .class {
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            color: #ffffff;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
         }
-        .bar-label {
+        .class:hover {
+            transform: translateY(-2px);
+        }
+        .class .color-picker {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            background: none;
+            border: 2px solid #fff;
+        }
+        .class .time, .class .location {
             font-size: 12px;
-            margin: 2px 0;
-            color: var(--light-text);
+        }
+        .editable {
+            border: none;
+            background: transparent;
+            color: #ffffff;
+            width: 100%;
+        }
+        .menu {
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            z-index: 2;
+        }
+        .menu button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+        }
+        .menu-content {
+            display: none;
+            position: absolute;
+            top: 40px;
+            right: -10px;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            z-index: 3;
+            padding: 8px;
+            min-width: 180px;
+            backdrop-filter: blur(10px);
+        }
+        .menu-content a {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            margin: 4px 0;
+            font-weight: 500;
+        }
+        .menu-content a:hover {
+            background-color: rgba(74, 144, 226, 0.1);
+            transform: translateX(4px);
+            color: #4a90e2;
+        }
+        .dark-mode .menu-content {
+            background: rgba(45, 45, 45, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .dark-mode .menu-content a {
+            color: #fff;
+        }
+        .dark-mode .menu-content a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #4a90e2;
+        }
+        .dark-mode {
+            background-color: #191919;
+        }
+        .dark-mode .widget {
+            background-color: #1F1F1F;
+            color: #ffffff;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 15px;
+            margin-top: auto;
+        }
+        .nav-buttons button {
+            background: #e0e0e0;
+            border: none;
+            color: #333;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .nav-buttons button:hover {
+            background: #d0d0d0;
+            transform: translateY(-1px);
+        }
+        .dark-mode .nav-buttons button {
+            background: #333;
+            color: #fff;
+        }
+        .dark-mode .nav-buttons button:hover {
+            background: #444;
         }
 
-        /* Modificar el color del texto de energía y cortisol en el modo oscuro */
-        .dark-mode .energy-label,
-        .dark-mode .cortisol-label {
+        .delete-btn {
+            position: absolute;
+            top: 5px;
+            right: 35px;
+            background: none;
+            border: none;
             color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0 5px;
+            opacity: 0.7;
         }
 
-        /* Modificar el color del texto de energía y cortisol en el modo claro */
-        .light-mode .energy-label,
-        .light-mode .cortisol-label {
-            color: black;
+        .delete-btn:hover {
+            opacity: 1;
         }
     </style>
 </head>
 <body>
-
-<div class="tracker-container">
-    <h1>Coffee Tracker</h1>
-    <p class="date" id="currentDate"></p>
-    <button class="mode-toggle" id="modeToggle"></button>
-    <div class="cup-count">
-        <span id="cupCount">0</span>
-        <span class="caffeine-mg" id="caffeineMg">(0 mg)</span>
+    <div class="container" id="container">
+        <div class="day-page" id="monday">
+            <div class="widget">
+                <div class="header">
+                    Lunes
+                    <div class="menu">
+                        <button onclick="toggleMenu('menuContentMonday')">☰</button>
+                        <div class="menu-content" id="menuContentMonday">
+                            <a href="#" onclick="toggleDarkMode()">Modo Oscuro/Claro</a>
+                            <a href="#" onclick="addClass('monday')">Agregar Clase</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="day" id="dayContainerMonday">
+                    <!-- Clases se generan dinámicamente -->
+                </div>
+                <div class="nav-buttons">
+                    <button onclick="prevPage()">&#8249;</button>
+                    <button onclick="nextPage()">&#8250;</button>
+                </div>
+            </div>
+        </div>
+        <div class="day-page" id="tuesday">
+            <div class="widget">
+                <div class="header">
+                    Martes
+                    <div class="menu">
+                        <button onclick="toggleMenu('menuContentTuesday')">☰</button>
+                        <div class="menu-content" id="menuContentTuesday">
+                            <a href="#" onclick="toggleDarkMode()">Modo Oscuro/Claro</a>
+                            <a href="#" onclick="addClass('tuesday')">Agregar Clase</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="day" id="dayContainerTuesday">
+                    <!-- Clases se generan dinámicamente -->
+                </div>
+                <div class="nav-buttons">
+                    <button onclick="prevPage()">&#8249;</button>
+                    <button onclick="nextPage()">&#8250;</button>
+                </div>
+            </div>
+        </div>
+        <div class="day-page" id="wednesday">
+            <div class="widget">
+                <div class="header">
+                    Miércoles
+                    <div class="menu">
+                        <button onclick="toggleMenu('menuContentWednesday')">☰</button>
+                        <div class="menu-content" id="menuContentWednesday">
+                            <a href="#" onclick="toggleDarkMode()">Modo Oscuro/Claro</a>
+                            <a href="#" onclick="addClass('wednesday')">Agregar Clase</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="day" id="dayContainerWednesday">
+                    <!-- Clases se generan dinámicamente -->
+                </div>
+                <div class="nav-buttons">
+                    <button onclick="prevPage()">&#8249;</button>
+                    <button onclick="nextPage()">&#8250;</button>
+                </div>
+            </div>
+        </div>
+        <div class="day-page" id="thursday">
+            <div class="widget">
+                <div class="header">
+                    Jueves
+                    <div class="menu">
+                        <button onclick="toggleMenu('menuContentThursday')">☰</button>
+                        <div class="menu-content" id="menuContentThursday">
+                            <a href="#" onclick="toggleDarkMode()">Modo Oscuro/Claro</a>
+                            <a href="#" onclick="addClass('thursday')">Agregar Clase</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="day" id="dayContainerThursday">
+                    <!-- Clases se generan dinámicamente -->
+                </div>
+                <div class="nav-buttons">
+                    <button onclick="prevPage()">&#8249;</button>
+                    <button onclick="nextPage()">&#8250;</button>
+                </div>
+            </div>
+        </div>
+        <div class="day-page" id="friday">
+            <div class="widget">
+                <div class="header">
+                    Viernes
+                    <div class="menu">
+                        <button onclick="toggleMenu('menuContentFriday')">☰</button>
+                        <div class="menu-content" id="menuContentFriday">
+                            <a href="#" onclick="toggleDarkMode()">Modo Oscuro/Claro</a>
+                            <a href="#" onclick="addClass('friday')">Agregar Clase</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="day" id="dayContainerFriday">
+                    <!-- Clases se generan dinámicamente -->
+                </div>
+                <div class="nav-buttons">
+                    <button onclick="prevPage()">&#8249;</button>
+                    <button onclick="nextPage()">&#8250;</button>
+                </div>
+            </div>
+        </div>
+        <div class="day-page" id="saturday">
+            <div class="widget">
+                <div class="header">
+                    Sábado
+                    <div class="menu">
+                        <button onclick="toggleMenu('menuContentSaturday')">☰</button>
+                        <div class="menu-content" id="menuContentSaturday">
+                            <a href="#" onclick="toggleDarkMode()">Modo Oscuro/Claro</a>
+                            <a href="#" onclick="addClass('saturday')">Agregar Clase</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="day" id="dayContainerSaturday">
+                    <!-- Clases se generan dinámicamente -->
+                </div>
+                <div class="nav-buttons">
+                    <button onclick="prevPage()">&#8249;</button>
+                    <button onclick="nextPage()">&#8250;</button>
+                </div>
+            </div>
+        </div>
+    <div class="day-page" id="sunday">
+            <div class="widget">
+                <div class="header">
+                    Domingo
+                    <div class="menu">
+                        <button onclick="toggleMenu('menuContentSunday')">☰</button>
+                        <div class="menu-content" id="menuContentSunday">
+                            <a href="#" onclick="toggleDarkMode()">Modo Oscuro/Claro</a>
+                            <a href="#" onclick="addClass('sunday')">Agregar Clase</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="day" id="dayContainerSunday">
+                    <!-- Clases se generan dinámicamente -->
+                </div>
+                <div class="nav-buttons">
+                    <button onclick="prevPage()">&#8249;</button>
+                    <button onclick="nextPage()">&#8250;</button>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="buttons">
-        <button class="increment" onclick="incrementCups()">Agregar</button>
-        <button class="reset" onclick="resetCups()">Reiniciar</button>
-    </div>
-    <div class="notification" id="notification"></div>
+    <input type="color" id="hiddenColorPicker" style="display: none;" onchange="updateColor(this)" list="presetColors">
+    <datalist id="presetColors">
+        <option value="#6366F1">
+        <option value="#EC4899">
+        <option value="#10B981">
+        <option value="#F59E0B">
+        <option value="#3B82F6">
+        <option value="#8B5CF6">
+    </datalist>
 
-    <div class="bar-container">
-        <div class="bar-label energy-label">Energía</div>
-        <div class="bar energy-bar" id="energyBar" style="width: 0;"></div>
-        <div class="bar-label cortisol-label">Cortisol</div>
-        <div class="bar cortisol-bar" id="cortisolBar" style="width: 0;"></div>
-    </div>
-</div>
+    <script>
+        let currentPage = 0;
+        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-<script>
-    const cupCountElement = document.getElementById('cupCount');
-    const caffeineMgElement = document.getElementById('caffeineMg');
-    const notificationElement = document.getElementById('notification');
-    const modeToggle = document.getElementById('modeToggle');
-    const currentDateElement = document.getElementById('currentDate');
-    const energyBar = document.getElementById('energyBar');
-    const cortisolBar = document.getElementById('cortisolBar');
-    const energyLabel = document.querySelector('.energy-label');
-    const cortisolLabel = document.querySelector('.cortisol-label');
-
-    let cupCount = localStorage.getItem('cupCount') ? parseInt(localStorage.getItem('cupCount')) : 0;
-    let energyLevel = localStorage.getItem('energyLevel') ? parseFloat(localStorage.getItem('energyLevel')) : 0;
-    let cortisolLevel = localStorage.getItem('cortisolLevel') ? parseFloat(localStorage.getItem('cortisolLevel')) : 0;
-    const caffeinePerCup = 95;
-    const warningLimit = 3;
-    const dangerLimit = 5;
-    let darkMode = localStorage.getItem('darkMode') === 'true';
-
-    function updateDate() {
-        const today = new Date();
-        const todayString = today.toISOString().split('T')[0];
-        const storedDate = localStorage.getItem('currentDate');
-
-        if (storedDate !== todayString) {
-            localStorage.setItem('currentDate', todayString);
-            resetCups();
+        function toggleMenu(menuId) {
+            const menuContent = document.getElementById(menuId);
+            menuContent.style.display = menuContent.style.display === 'block' ? 'none' : 'block';
         }
 
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        currentDateElement.textContent = today.toLocaleDateString('es-ES', options);
-    }
-
-    function incrementCups() {
-        cupCount++;
-        energyLevel += 20; // Incremento fijo por taza
-        cortisolLevel += 10;
-        localStorage.setItem('cupCount', cupCount);
-        localStorage.setItem('energyLevel', energyLevel);
-        localStorage.setItem('cortisolLevel', cortisolLevel);
-        updateDisplay();
-        checkLimits();
-    }
-
-    function resetCups() {
-        cupCount = 0;
-        energyLevel = 0;
-        cortisolLevel = 0;
-        localStorage.setItem('cupCount', cupCount);
-        localStorage.setItem('energyLevel', energyLevel);
-        localStorage.setItem('cortisolLevel', cortisolLevel);
-        updateDisplay();
-        notificationElement.style.display = 'none';
-    }
-
-    function updateDisplay() {
-        cupCountElement.textContent = cupCount;
-        caffeineMgElement.textContent = cupCount > 0 ? `(${cupCount * caffeinePerCup} mg)` : "(0 mg)";
-        energyBar.style.width = `${Math.min(energyLevel, 100)}%`;
-        cortisolBar.style.width = `${Math.min(cortisolLevel, 100)}%`;
-        energyLabel.textContent = `Energía: ${Math.round(energyLevel)}%`;
-        cortisolLabel.textContent = `Cortisol: ${Math.round(cortisolLevel)}%`;
-    }
-
-    function checkLimits() {
-        if (cupCount >= dangerLimit) {
-            notifyUser('Demasiado café. Puedes experimentar ansiedad o insomnio.', 'danger');
-        } else if (cupCount >= warningLimit) {
-            notifyUser('Cuidado: estás cerca del límite recomendado de cafeína.', 'warning');
-        } else {
-            notificationElement.style.display = 'none';
-        }
-    }
-
-    function notifyUser(message, type) {
-        notificationElement.textContent = message;
-        notificationElement.className = `notification ${type}`;
-        notificationElement.style.display = 'block';
-    }
-
-    function reduceEffects() {
-        const caffeineHalfLife = 300; // Vida media en minutos (5 horas)
-        const cortisolDecayFastRate = 0.5; // Reducción rápida inicial por minuto (primera hora)
-        const cortisolDecaySlowRate = 0.1; // Reducción lenta por minuto (después de la primera hora)
-        const reductionRate = 100 / caffeineHalfLife; // Reducción porcentual por minuto
-
-        // Reducir energía basado en la vida media de la cafeína
-        if (energyLevel > 0) {
-            energyLevel -= reductionRate;
-            if (energyLevel < 0) energyLevel = 0; // Asegurarse de que no sea negativo
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDarkMode);
         }
 
-        // Reducir cortisol basado en dos fases: rápida y lenta
-        if (cortisolLevel > 0) {
-            if (cortisolLevel > 50) { 
-                cortisolLevel -= cortisolDecayFastRate; // Fase rápida
-            } else {
-                cortisolLevel -= cortisolDecaySlowRate; // Fase lenta
+        function openColorPicker(element) {
+            const colors = ['#6366F1', '#EC4899', '#10B981', '#F59E0B', '#3B82F6', '#8B5CF6'];
+            const colorPalette = document.createElement('div');
+            colorPalette.style.position = 'absolute';
+            colorPalette.style.backgroundColor = '#fff';
+            colorPalette.style.padding = '10px';
+            colorPalette.style.borderRadius = '8px';
+            colorPalette.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+            colorPalette.style.display = 'grid';
+            colorPalette.style.gridTemplateColumns = 'repeat(3, 1fr)';
+            colorPalette.style.gap = '5px';
+            colorPalette.style.zIndex = '1000';
+
+            colors.forEach(color => {
+                const colorOption = document.createElement('div');
+                colorOption.style.width = '25px';
+                colorOption.style.height = '25px';
+                colorOption.style.backgroundColor = color;
+                colorOption.style.borderRadius = '50%';
+                colorOption.style.cursor = 'pointer';
+                colorOption.style.border = '2px solid #eee';
+
+                colorOption.onclick = () => {
+                    const classElement = element.closest('.class');
+                    classElement.style.backgroundColor = color;
+                    element.style.backgroundColor = color;
+                    colorPalette.remove();
+                    saveSchedule();
+                };
+
+                colorPalette.appendChild(colorOption);
+            });
+
+            const rect = element.getBoundingClientRect();
+            colorPalette.style.top = rect.bottom + 5 + 'px';
+            colorPalette.style.left = rect.left + 'px';
+
+            document.body.appendChild(colorPalette);
+
+            document.addEventListener('click', function closeColorPalette(e) {
+                if (!colorPalette.contains(e.target) && e.target !== element) {
+                    colorPalette.remove();
+                    document.removeEventListener('click', closeColorPalette);
+                }
+            });
+        }
+
+        function updateColor(colorPicker) {
+            const element = colorPicker.targetElement;
+            const classElement = element.closest('.class');
+            classElement.style.backgroundColor = colorPicker.value;
+            element.style.backgroundColor = colorPicker.value;
+            saveSchedule();
+        }
+
+        function saveSchedule() {
+            days.forEach(day => {
+                const classes = document.querySelectorAll(`#dayContainer${day} .class`);
+                const schedule = [];
+
+                classes.forEach(classEl => {
+                    const subject = classEl.querySelector('.subject').value;
+                    const time = classEl.querySelector('.time').value;
+                    const location = classEl.querySelector('.location') ? classEl.querySelector('.location').value : '';
+                    const color = classEl.style.backgroundColor;
+
+                    schedule.push({ subject, time, location, color });
+                });
+
+                localStorage.setItem(`schedule${day}`, JSON.stringify(schedule));
+            });
+        }
+
+        // Registrar Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => console.log('ServiceWorker registrado'))
+                    .catch(error => console.log('Error al registrar ServiceWorker:', error));
+            });
+        }
+
+        function loadSchedule() {
+            days.forEach(day => {
+                const schedule = JSON.parse(localStorage.getItem(`schedule${day}`));
+                if (schedule) {
+                    schedule.forEach(classData => {
+                        addClassElement(day, classData);
+                    });
+                } else {
+                    const defaultClasses = [
+                        { subject: 'Física', time: '8:00 AM - 9:30 AM', location: 'Lab 1', color: '#6366F1' },
+                        { subject: 'Dibujo', time: '9:30 AM - 11:00 AM', location: 'Aula 1', color: '#EC4899' },
+                        { subject: 'Inglés', time: '11:00 AM - 2:00 PM', location: 'Lab 2', color: '#10B981' },
+                        { subject: 'Filosofía', time: '2:00 PM - 4:00 PM', location: 'Lab 9b', color: '#F59E0B' },
+                        { subject: 'Ciencias Naturales', time: '4:00 PM - 6:00 PM', location: 'Lab 2a', color: '#3B82F6' },
+                        { subject: 'Mates', time: '6:00 PM - 7:00 PM', location: 'Aula 3.4.1', color: '#8B5CF6' }
+                    ];
+                    defaultClasses.forEach(classData => {
+                        addClassElement(day, classData);
+                    });
+                }
+            });
+        }
+
+        function addClassElement(day, { subject, time, location, color }) {
+            const dayContainer = document.getElementById(`dayContainer${day}`);
+            if (!dayContainer) return; // Evitar el error si el contenedor no existe
+            const classEl = document.createElement('div');
+            classEl.className = 'class';
+            classEl.style.backgroundColor = color;
+
+            classEl.innerHTML = `
+                <div class="color-picker" onclick="openColorPicker(this)" style="background-color: ${color};"></div>
+                <input class="editable subject" value="${subject}">
+                <input class="editable time" value="${time}">
+                <input class="editable location" value="${location}">
+            `;
+
+            classEl.querySelectorAll('.editable').forEach(input => {
+                input.addEventListener('input', saveSchedule);
+            });
+
+            dayContainer.appendChild(classEl);
+        }
+
+        function nextPage() {
+            if (currentPage < days.length - 1) {
+                currentPage++;
+                updatePage();
             }
-            if (cortisolLevel < 0) cortisolLevel = 0; // Asegurarse de que no sea negativo
         }
 
-        // Guardar niveles actualizados
-        localStorage.setItem('energyLevel', energyLevel.toFixed(2));
-        localStorage.setItem('cortisolLevel', cortisolLevel.toFixed(2));
+        function prevPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                updatePage();
+            }
+        }
 
-        // Actualizar la visualización
-        updateDisplay();
-    }
+        function updatePage() {
+            const container = document.getElementById('container');
+            container.style.transform = `translateX(-${currentPage * 100}%)`;
+        }
 
-    setInterval(reduceEffects, 60000); // Reduce los niveles cada minuto
+        let startX = 0;
+        let currentX = 0;
 
-    modeToggle.addEventListener('click', () => {
-        darkMode = !darkMode;
-        if (darkMode) enableDarkMode();
-        else disableDarkMode();
-        localStorage.setItem('darkMode', darkMode);
-    });
+        function handleTouchStart(evt) {
+            const firstTouch = evt.touches[0];
+            startX = firstTouch.clientX;
+        }
 
-    function enableDarkMode() {
-        document.body.style.background = 'var(--dark-bg)';
-        document.body.style.color = 'var(--dark-text)';
-        document.querySelector('.tracker-container').style.background = 'var(--dark-bg)';
-        document.querySelector('.tracker-container').style.boxShadow = `0 4px 12px var(--shadow-dark)`;
-        currentDateElement.style.color = 'white';
-        caffeineMgElement.style.color = 'white';
-        document.body.classList.add('dark-mode');
-        document.body.classList.remove('light-mode');
-    }
+        function handleTouchMove(evt) {
+            if (!startX) return;
+            evt.preventDefault();
+            const currentTouch = evt.touches[0];
+            currentX = currentTouch.clientX - startX;
+            
+            const container = document.getElementById('container');
+            const transform = -currentPage * 100 + (currentX / window.innerWidth) * 100;
+            container.style.transform = `translateX(${transform}%)`;
+        }
 
-    function disableDarkMode() {
-        document.body.style.background = 'var(--notion-light-bg)';
-        document.body.style.color = 'var(--light-text)';
-        document.querySelector('.tracker-container').style.background = 'var(--highlight)';
-        document.querySelector('.tracker-container').style.boxShadow = `0 4px 12px var(--shadow-light)`;
-        currentDateElement.style.color = 'var(--light-text)';
-        caffeineMgElement.style.color = 'var(--light-text)';
-        document.body.classList.add('light-mode');
-        document.body.classList.remove('dark-mode');
-    }
+        function handleTouchEnd() {
+            const threshold = window.innerWidth * 0.15; // 15% del ancho de la pantalla
+            if (currentX < -threshold) {
+                nextPage();
+            } else if (currentX > threshold) {
+                prevPage();
+            } else {
+                // Volver a la posición original si no se alcanza el umbral
+                const container = document.getElementById('container');
+                container.style.transform = `translateX(-${currentPage * 100}%)`;
+            }
+            startX = 0;
+            currentX = 0;
+        }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        updateDate();
-        updateDisplay();
-        if (darkMode) enableDarkMode();
-    });
-</script>
+        function deleteClass(element) {
+            const classEl = element.closest('.class');
+            classEl.remove();
+            saveSchedule();
+        }
 
+        function addClass(day) {
+            const dayId = day.charAt(0).toUpperCase() + day.slice(1);
+            const dayContainer = document.getElementById(`dayContainer${dayId}`);
+            const newClass = document.createElement('div');
+            newClass.className = 'class';
+            newClass.innerHTML = `
+                <div class="color-picker" onclick="openColorPicker(this)"></div>
+                <input class="editable subject" placeholder="Asignatura">
+                <input class="editable time" placeholder="Hora">
+                <input class="editable location" placeholder="Ubicación">
+                <button class="delete-btn" onclick="deleteClass(this)">×</button>
+            `;
+            newClass.querySelectorAll('.editable').forEach(input => {
+                input.addEventListener('input', saveSchedule);
+            });
+            dayContainer.appendChild(newClass);
+            saveSchedule();
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSchedule();
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+            }
+
+            const container = document.getElementById('container');
+            container.addEventListener('touchstart', handleTouchStart, false);
+            container.addEventListener('touchmove', handleTouchMove, false);
+            container.addEventListener('touchend', handleTouchEnd, false);
+        });
+    </script>
 </body>
 </html>
