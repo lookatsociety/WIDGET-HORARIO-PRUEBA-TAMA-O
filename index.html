@@ -33,8 +33,10 @@
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
             padding: 8px;
             height: auto;
-            max-height: 400px;
+            min-height: 200px;
+            max-height: 80vh;
             overflow-y: auto;
+            resize: vertical;
             transition: background-color 0.3s ease, box-shadow 0.3s ease;
             z-index: 1;
             position: relative;
@@ -188,6 +190,11 @@
         
         .delete-btn:hover {
             opacity: 1;
+        }
+        
+        .widget::-webkit-resizer {
+            background-color: #ccc;
+            border-radius: 0 0 12px 0;
         }
     </style>
 </head>
