@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -10,7 +11,7 @@
 </head>
   <style>
     :root {
-      --orange: #FF4C1E;
+      --Aorange: #FF4C1E;
       --white: #fff;
       --bg-light: #FFFFFF;
       --bg-dark: #191919;
@@ -66,20 +67,6 @@
       margin-bottom: 1.5rem;
       position: relative;
       overflow: hidden;
-      z-index: 1;
-    }
-
-    .widget-background {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      border-radius: 20px;
-      z-index: -1;
     }
 
     .widget::before {
@@ -92,12 +79,6 @@
       background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
       border-radius: 20px;
       pointer-events: none;
-      z-index: 1;
-    }
-
-    .widget > * {
-      position: relative;
-      z-index: 2;
     }
 
     .widget h2 {
@@ -434,7 +415,6 @@
 <body>
 
   <div class="widget">
-    <div class="widget-background"></div>
     <button class="toggle-theme" onclick="toggleTheme()">●</button>
     <h2 id="monthTitle">November totals</h2>
     <div class="current-date" id="currentDate" style="font-size: 0.75rem; margin-bottom: 0.6rem; opacity: 0.9; color: #333; font-weight: 500; text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);">
@@ -495,7 +475,6 @@
     const contextMenu = document.getElementById('contextMenu');
     const backgroundContextMenu = document.getElementById('backgroundContextMenu');
     const backgroundInput = document.getElementById('backgroundInput');
-    const widgetBackground = document.querySelector('.widget-background');
 
     // Obtener fecha actual
     const now = new Date();
@@ -613,7 +592,7 @@
     function loadBackgroundImage() {
       const savedBackground = localStorage.getItem(STORAGE_KEY_BACKGROUND);
       if (savedBackground) {
-        widgetBackground.style.backgroundImage = `url(${savedBackground})`;
+        document.body.style.backgroundImage = `url(${savedBackground})`;
       }
     }
 
@@ -624,7 +603,7 @@
 
     // Remove background image
     function removeBackgroundImage() {
-      widgetBackground.style.backgroundImage = '';
+      document.body.style.backgroundImage = '';
       localStorage.removeItem(STORAGE_KEY_BACKGROUND);
     }
 
@@ -730,7 +709,7 @@
         const reader = new FileReader();
         reader.onload = (e) => {
           const imageDataUrl = e.target.result;
-          widgetBackground.style.backgroundImage = `url(${imageDataUrl})`;
+          document.body.style.backgroundImage = `url(${imageDataUrl})`;
           saveBackgroundImage(imageDataUrl);
         };
         reader.readAsDataURL(file);
@@ -758,7 +737,7 @@
     // Handle right click on background vs days
     document.addEventListener('contextmenu', (e) => {
       e.preventDefault();
-
+      
       if (e.target.classList.contains('day')) {
         // Day right click - show day context menu
         selectedDay = e.target;
@@ -777,7 +756,7 @@
         })
         .catch(registrationError => {
           console.log('SW registration failed: ', registrationError);
-                });
+        });
     }
   </script>
 
